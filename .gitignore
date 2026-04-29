@@ -1,18 +1,45 @@
-.DS_Store
-node_modules
-/build
-/.svelte-kit
-/package
+# Rust / Cargo build artifacts
+/target
+**/target
+**/*.rs.bk
+
+# Cargo lockfile is committed (required for reproducible builds in a workspace)
+# Cargo.lock
+
+# Persistent runtime data (sessions, checkpoints, memory snapshots)
+# TaskExecutor writes JSON files here — never commit user/runtime state
+data/
+storage/
+sessions/
+
+# Environment / secrets (future-proof, even though we are zero-cloud)
 .env
-.env.*
-!.env.example
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+.env.local
 
-# --- VS Code ---
-/.vscode
+# Logs
+*.log
+logs/
 
-# --- AI Assistants ---
+# Editor / IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test coverage / profiling (if we add later)
+*.profraw
+*.profdata
+
+# AI Assistants
 *_INSTRUCT.txt
 AGENTS.md
 PLAN.md
