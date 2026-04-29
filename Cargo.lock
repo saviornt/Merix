@@ -2305,10 +2305,15 @@ name = "merix-skills"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "merix-mcp",
  "merix-memory",
+ "merix-models",
  "serde",
+ "serde_json",
  "tokio",
+ "tracing",
+ "uuid",
 ]
 
 [[package]]
