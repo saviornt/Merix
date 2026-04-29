@@ -2294,10 +2294,16 @@ name = "merix-self-extension"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "merix-core",
+ "merix-mcp",
+ "merix-memory",
+ "merix-models",
  "merix-skills",
  "serde",
+ "serde_json",
  "tokio",
+ "tracing",
 ]
 
 [[package]]
