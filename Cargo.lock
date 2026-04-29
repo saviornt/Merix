@@ -2252,7 +2252,12 @@ name = "merix-mcp"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
+ "dashmap 6.1.0",
+ "merix-memory",
+ "merix-models",
  "serde",
+ "serde_json",
  "tokio",
  "tracing",
  "uuid",

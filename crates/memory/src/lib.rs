@@ -18,7 +18,6 @@ pub struct MemoryItem {
 pub struct MemoryLayer {
     db: Surreal<Db>,                              // Official concrete type for local engines
     short_term: DashMap<String, MemoryItem>,
-    storage_path: String,
 }
 
 impl MemoryLayer {
@@ -35,7 +34,6 @@ impl MemoryLayer {
         Ok(Self {
             db,
             short_term: DashMap::new(),
-            storage_path: storage_path.to_string(),
         })
     }
 

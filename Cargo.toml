@@ -29,4 +29,5 @@ dashmap = "6.1"
 uuid = { version = "1.10", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 serde_json = "1.0"
-surrealdb = { version = "2.6.5", features = ["kv-rocksdb"] }  # Correct embedded RocksDB feature (no "tokio")
+surrealdb = { version = "2", features = ["kv-rocksdb"] }
+async-trait = "0.1"

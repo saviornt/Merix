@@ -12,3 +12,8 @@ serde.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 uuid.workspace = true
+serde_json.workspace = true
+dashmap.workspace = true
+merix-memory = { path = "../memory" }
+merix-models = { path = "../../models" }
+async-trait = "0.1"
