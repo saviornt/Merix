@@ -2253,6 +2253,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "merix-schemas",
+ "merix-utilities",
  "serde",
  "serde_json",
  "tokio",
@@ -2284,6 +2285,7 @@ dependencies = [
  "chrono",
  "dashmap 6.1.0",
  "merix-schemas",
+ "merix-utilities",
  "serde",
  "serde_json",
  "surrealdb",
@@ -2333,6 +2335,13 @@ dependencies = [
  "tokio",
  "tracing",
  "uuid",
+]
+
+[[package]]
+name = "merix-utilities"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
 ]
 
 [[package]]

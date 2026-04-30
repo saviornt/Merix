@@ -15,5 +15,6 @@ uuid.workspace = true
 chrono.workspace = true
 surrealdb.workspace = true
 merix-schemas = { path = "../../schemas" }
+merix-utilities = { path = "../utilities" }
 tracing.workspace = true
 serde_json.workspace = true

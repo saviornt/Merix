@@ -3,6 +3,7 @@ use std::path::Path;
 use tokio::fs;
 use merix_schemas::{Session, Task, Checkpoint, TaskStatus, SessionId, StepStatus};
 use tracing::{info, warn};
+use merix_utilities::debug_val;
 
 pub struct TaskExecutor {
     storage_path: String,
@@ -16,8 +17,14 @@ impl TaskExecutor {
     }
 
     pub async fn save_session(&self, session: &Session) -> Result<()> {
+        debug_val("core::save_session - session", session);
+        
         let path = Path::new(&self.storage_path).join(format!("session_{}.json", session.id.0));
+        //debug_val("core::save_session - path", path);
+        
         let json = serde_json::to_string_pretty(session)?;
+        //debug_val("core::save_session - json", json);
+        
         fs::write(&path, json).await?;
         info!("Session {} saved", session.id.0);
         Ok(())
@@ -35,14 +42,45 @@ impl TaskExecutor {
     }
 
     pub async fn create_checkpoint(&self, session: &Session, task: &Task, step_index: usize) -> Result<Checkpoint> {
-        let state_snapshot = serde_json::to_value(task)
-            .map_err(|e| anyhow::anyhow!("Failed to serialize task state for checkpoint: {}", e))?;
+        // Explicit manual JSON for state_snapshot (no enum serialization path)
+        debug_val("core::create_checkpoint - session", session);
+        debug_val("core::create_checkpoint - task", task);
+
+        let state_snapshot = serde_json::json!({
+            "id": task.id.0.to_string(),
+            "description": task.description,
+            "status": match task.status {
+                TaskStatus::Pending => "pending",
+                TaskStatus::Running => "running",
+                TaskStatus::Completed => "completed",
+                TaskStatus::Failed => "failed",
+                TaskStatus::Paused => "paused",
+            },
+            "steps": task.steps.iter().map(|step| {
+                serde_json::json!({
+                    "description": step.description,
+                    "status": match step.status {
+                        StepStatus::Pending => "pending",
+                        StepStatus::Running => "running",
+                        StepStatus::Completed => "completed",
+                        StepStatus::Failed => "failed",
+                    },
+                    "output": step.output,
+                    "checkpoint_id": step.checkpoint_id.as_ref().map(|id| id.0.to_string())
+                })
+            }).collect::<Vec<_>>(),
+            "created_at": task.created_at,
+            "updated_at": task.updated_at
+        });
+        debug_val("core::create_checkpoint - state_snapshot", &state_snapshot);
 
         let checkpoint = Checkpoint::new(
             task.id.clone(),
             session.id.clone(),
             state_snapshot,
         );
+        debug_val("core::create_checkpoint - checkpoint", &checkpoint);
+
         info!("Checkpoint created at step {} for task {}", step_index, task.id.0);
         Ok(checkpoint)
     }
