@@ -1,8 +1,7 @@
 ﻿use anyhow::{anyhow, Result};
 use std::path::Path;
 use tokio::fs;
-use serde_json;
-use merix_models::{Session, Task, Checkpoint, TaskStatus, SessionId};
+use merix_models::{Session, Task, Checkpoint, TaskStatus, SessionId, StepStatus};
 use tracing::{info, warn};
 
 pub struct TaskExecutor {
@@ -36,13 +35,13 @@ impl TaskExecutor {
     }
 
     pub async fn create_checkpoint(&self, session: &Session, task: &Task, step_index: usize) -> Result<Checkpoint> {
-        let serialized = serde_json::to_string(task)?;
+        let state_snapshot = serde_json::to_value(task)
+            .map_err(|e| anyhow::anyhow!("Failed to serialize task state for checkpoint: {}", e))?;
+
         let checkpoint = Checkpoint::new(
-            task.id.0,
-            session.id.0,
-            step_index,
-            task.status.clone(),
-            serialized,
+            task.id.clone(),
+            session.id.clone(),
+            state_snapshot,
         );
         info!("Checkpoint created at step {} for task {}", step_index, task.id.0);
         Ok(checkpoint)
@@ -57,17 +56,17 @@ impl TaskExecutor {
         session.add_task(task.clone());
 
         for i in 0..task.steps.len() {
-            // Checkpoint BEFORE mutable borrow of step (fixes E0502)
+            // Checkpoint BEFORE mutable borrow of step (fixes borrow checker)
             let _cp = self.create_checkpoint(session, &task, i).await?;
 
             let step = &mut task.steps[i];
             info!("Executing step {}: {}", i, step.description);
-            step.status = merix_models::StepStatus::Running;
+            step.status = StepStatus::Running;
 
             // Simulate work
             tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
 
-            step.status = merix_models::StepStatus::Completed;
+            step.status = StepStatus::Completed;
             step.output = Some(format!("Step {} completed successfully", i));
         }
 
@@ -82,7 +81,7 @@ impl TaskExecutor {
     }
 
     pub async fn resume_task(&self, session: &mut Session) -> Result<()> {
-        if let Some(task_id) = session.current_task {
+        if let Some(task_id) = &session.current_task {
             warn!("Resuming task {} from last checkpoint", task_id.0);
         }
         Ok(())

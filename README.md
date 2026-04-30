@@ -1,6 +1,6 @@
 # Merix
 
-**Version 1.0**
+**Version 2.0**
 
 **The rogue messenger that delivers forbidden intelligence.**
 
