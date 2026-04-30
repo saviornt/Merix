@@ -12,7 +12,7 @@ serde.workspace = true
 tokio.workspace = true
 merix-mcp = { path = "../mcp" }
 merix-memory = { path = "../memory" }
-merix-models = { path = "../../models" }
+merix-schemas = { path = "../../schemas" }
 async-trait = "0.1"
 serde_json.workspace = true
 tracing.workspace = true

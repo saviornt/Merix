@@ -8,7 +8,7 @@ use tracing::info;
 use merix_skills::{Skill, SkillMetadata, SkillRegistry};
 use merix_memory::MemoryLayer;
 use merix_mcp::ToolRegistry;
-use merix_models::SessionId;
+use merix_schemas::SessionId;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorkflowPattern {

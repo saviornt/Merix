@@ -158,7 +158,7 @@ Logs are important for both developers, users and agents.
 ### 9. Vector Embeddings & Semantic Memory
 
 - Local embedding generation using the same llama.cpp engine as the main inference runtime
-- Support for user-provided GGUF embedding models (nomic-embed-text, bge-small-en-v1.5, snowflake-arctic-embed, etc.)
+- Support for user-provided GGUF embedding schemas (nomic-embed-text, bge-small-en-v1.5, snowflake-arctic-embed, etc.)
 - Automatic vector embedding of Sessions, Tasks, Steps, Checkpoints, and Project Memory items on save
 - Native vector fields and indexes in SurrealDB (cosine / euclidean / dot-product)
 - Semantic retrieval API in MemoryLayer (`reconstruct_context` becomes hybrid vector + structured)
@@ -174,7 +174,7 @@ This feature completes the foundation for meaningful long-term memory and enable
 ### 10. Local Model Runtime (LLM Inference Engine)
 
 - llama.cpp-based inference engine via production-ready Rust bindings
-- User-provided GGUF model loading (no bundling — user places models in `models/` or any path)
+- User-provided GGUF model loading (no bundling — user places schemas in `schemas/` or any path)
 - Full CPU + GPU support (CUDA, Metal, ROCm) with automatic hardware detection
 - Deterministic session initialization and reproducible sampling
 - Streaming token generation with configurable context length, temperature, top-p, etc.

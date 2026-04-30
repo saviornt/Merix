@@ -8,7 +8,7 @@ use tokio::sync::RwLock;
 use tracing::{info, warn};
 use merix_memory::MemoryLayer;
 use uuid::Uuid;
-use merix_models::SessionId;
+use merix_schemas::SessionId;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolMetadata {

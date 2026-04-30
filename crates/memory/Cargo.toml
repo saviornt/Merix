@@ -14,6 +14,6 @@ dashmap.workspace = true
 uuid.workspace = true
 chrono.workspace = true
 surrealdb.workspace = true
-merix-models = { path = "../../models" }
+merix-schemas = { path = "../../schemas" }
 tracing.workspace = true
 serde_json.workspace = true

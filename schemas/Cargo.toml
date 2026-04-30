@@ -1,5 +1,5 @@
 ﻿[package]
-name = "merix-models"
+name = "merix-schemas"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

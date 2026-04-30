@@ -14,7 +14,7 @@ merix-skills = { path = "../skills" }
 merix-core = { path = "../core" }
 merix-memory = { path = "../memory" }
 merix-mcp = { path = "../mcp" }
-merix-models = { path = "../../models" }
+merix-schemas = { path = "../../schemas" }
 serde_json.workspace = true
 tracing.workspace = true
 async-trait = "0.1"

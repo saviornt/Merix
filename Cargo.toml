@@ -15,7 +15,7 @@ members = [
     "crates/skills",
     "crates/self-extension",
     "crates/cli",
-    "models/"
+    "schemas/"
 ]
 resolver = "2"
 

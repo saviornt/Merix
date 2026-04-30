@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 use tracing::info;
 use merix_mcp::{ToolCall, ToolRegistry};
 use merix_memory::MemoryLayer;
-use merix_models::SessionId;
+use merix_schemas::SessionId;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SkillMetadata {

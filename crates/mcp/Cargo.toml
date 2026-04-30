@@ -15,5 +15,5 @@ uuid.workspace = true
 serde_json.workspace = true
 dashmap.workspace = true
 merix-memory = { path = "../memory" }
-merix-models = { path = "../../models" }
+merix-schemas = { path = "../../schemas" }
 async-trait = "0.1"

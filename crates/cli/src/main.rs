@@ -9,7 +9,7 @@ use merix_memory::MemoryLayer;
 use merix_mcp::{ToolRegistry, EchoTool, MemoryQueryTool};
 use merix_skills::{SkillRegistry, ContextAnalyzerSkill};
 use merix_self_extension::SelfExtensionCore;
-use merix_models::SessionId;
+use merix_schemas::SessionId;
 use uuid::Uuid;
 
 #[derive(Parser)]
@@ -72,7 +72,7 @@ fn main() -> Result<()> {
         match cli.command {
             Commands::Task { description } => {
                 info!("Creating new task: {}", description);
-                let mut session = merix_models::Session::new();
+                let mut session = merix_schemas::Session::new();
                 task_executor.execute_task(&mut session, description).await?;
                 memory.save_session(&session).await?;
                 info!("Task completed. Session ID: {}", session.id.0);
@@ -80,7 +80,7 @@ fn main() -> Result<()> {
 
             Commands::Resume => {
                 info!("Resuming last task...");
-                let mut session = merix_models::Session::new();
+                let mut session = merix_schemas::Session::new();
                 task_executor.resume_task(&mut session).await?;
                 info!("Resume complete");
             }
@@ -103,7 +103,7 @@ fn main() -> Result<()> {
 
             Commands::SelfExtend { session_id: input_id } => {
                 let session_id = if input_id.eq_ignore_ascii_case("auto") {
-                    let new_session = merix_models::Session::new();
+                    let new_session = merix_schemas::Session::new();
                     memory.save_session(&new_session).await?;
                     info!("Created new session for self-extension: {}", new_session.id.0);
                     new_session.id
@@ -112,7 +112,7 @@ fn main() -> Result<()> {
                         Ok(u) => SessionId(u),
                         Err(_) => {
                             warn!("Invalid session ID: {}. Creating new session instead.", input_id);
-                            let new_session = merix_models::Session::new();
+                            let new_session = merix_schemas::Session::new();
                             memory.save_session(&new_session).await?;
                             info!("Created new session: {}", new_session.id.0);
                             new_session.id

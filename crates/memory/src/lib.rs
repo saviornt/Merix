@@ -5,7 +5,7 @@ use std::path::Path;
 use surrealdb::Surreal;
 use surrealdb::engine::local::{Db, RocksDb};
 use chrono::{DateTime, Utc};
-use merix_models::{Session, SessionId, TaskId, Checkpoint};
+use merix_schemas::{Session, SessionId, TaskId, Checkpoint};
 use tracing::info;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -36,7 +36,7 @@ impl MemoryLayer {
         })
     }
 
-    // === Persistent (SurrealDB) APIs – SIMPLE + RELIABLE ENUM-TO-JSON (models now correct) ===
+    // === Persistent (SurrealDB) APIs – SIMPLE + RELIABLE ENUM-TO-JSON (schemas now correct) ===
     pub async fn save_session(&self, session: &Session) -> Result<()> {
         let mut payload = serde_json::to_value(session)
             .map_err(|e| anyhow::anyhow!("Failed to serialize Session to JSON value: {}", e))?;
@@ -67,7 +67,7 @@ impl MemoryLayer {
             }
             None => {
                 info!("Session {} not found — creating empty session on-the-fly", session_id.0);
-                Ok(merix_models::Session::new())
+                Ok(merix_schemas::Session::new())
             }
         }
     }

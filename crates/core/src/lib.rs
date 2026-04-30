@@ -1,7 +1,7 @@
 ﻿use anyhow::{anyhow, Result};
 use std::path::Path;
 use tokio::fs;
-use merix_models::{Session, Task, Checkpoint, TaskStatus, SessionId, StepStatus};
+use merix_schemas::{Session, Task, Checkpoint, TaskStatus, SessionId, StepStatus};
 use tracing::{info, warn};
 
 pub struct TaskExecutor {

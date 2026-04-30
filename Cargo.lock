@@ -2236,7 +2236,7 @@ dependencies = [
  "merix-core",
  "merix-mcp",
  "merix-memory",
- "merix-models",
+ "merix-schemas",
  "merix-self-extension",
  "merix-skills",
  "serde_json",
@@ -2252,7 +2252,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
- "merix-models",
+ "merix-schemas",
  "serde",
  "serde_json",
  "tokio",
@@ -2268,7 +2268,7 @@ dependencies = [
  "async-trait",
  "dashmap 6.1.0",
  "merix-memory",
- "merix-models",
+ "merix-schemas",
  "serde",
  "serde_json",
  "tokio",
@@ -2283,7 +2283,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "dashmap 6.1.0",
- "merix-models",
+ "merix-schemas",
  "serde",
  "serde_json",
  "surrealdb",
@@ -2293,7 +2293,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "merix-models"
+name = "merix-schemas"
 version = "0.1.0"
 dependencies = [
  "chrono",
@@ -2311,7 +2311,7 @@ dependencies = [
  "merix-core",
  "merix-mcp",
  "merix-memory",
- "merix-models",
+ "merix-schemas",
  "merix-skills",
  "serde",
  "serde_json",
@@ -2327,7 +2327,7 @@ dependencies = [
  "async-trait",
  "merix-mcp",
  "merix-memory",
- "merix-models",
+ "merix-schemas",
  "serde",
  "serde_json",
  "tokio",
