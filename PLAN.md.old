@@ -1,0 +1,20 @@
+
+# PLAN.md
+
+Review the current README.md and the codebase. We are attempting to create a single desktop application that is platform agnostic and takes the best features of ollama (the backend), LM Studio & others (frontend) along with the orchestration capabilities of Hermes along with MCP and Skills usuage - and create a single, unified platform that we can easily extend - all powered within rust using llama-cpp-2. Once your initial review has been completed, and your vision is aligned with the previous statement perform the following tasks sequentially:
+
+[ ] 1. Perform research online on the creation of a production-grade AGENTS.md file and how it should be created for this project and the user's vision for it and then create it within the project root.
+
+[ ] 2. Create a MEMORY.md file so that agents can store any long-term memories that they need. The agents should use and maintain thier memory to ensure that they do not "forget" anything major/minor as they develop the project.
+
+[ ] 3. Using the README.md as a vision guide, develop a full, step-by-step plan to complete all project phases.
+
+[ ] 4. Store that plan inside of a PLAN.md file with checkboxes that can be marked as complete as the plan moves along.
+
+[ ] 5. Create a root-level .gitignore file with both the folders/files that we want ignored by Git as well as any AI-used files (AGENTS, MEMORY, PLAN).
+
+[ ] 6. **DO NOT IMPLEMENT THE PLAN OR START DEVELOPMENT**
+
+[ ] 7. Using the created AGENTS, MEMORY and PLAN as your guide, then start implementing the `PLAN.md` and ensure that after each minor and major milestone that the code is extensively tested.
+
+[ ] 8. If the code within that milestone does not run, has errors, bugs, problems or other issues, review what is causing those issues and fix them. Then re-run your testing suite to ensure that the issue has been resolved before moving to the next milestone.

@@ -50,10 +50,7 @@ impl Session {
             current_task: None,
         }
     }
-
-    pub fn add_task(&mut self, task: Task) {
-        self.tasks.push(task);
-    }
+    pub fn add_task(&mut self, task: Task) { self.tasks.push(task); }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -77,7 +74,6 @@ impl Task {
             updated_at: Utc::now(),
         }
     }
-
     pub fn add_step(&mut self, description: String) {
         self.steps.push(Step {
             description,
@@ -117,51 +113,14 @@ impl Checkpoint {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct CheckpointRecord {
-    pub task_id: String,
-    pub session_id: String,
-    pub timestamp: DateTime<Utc>,
-    pub state_snapshot: serde_json::Value,
-}
-
-impl From<&Checkpoint> for CheckpointRecord {
-    fn from(c: &Checkpoint) -> Self {
-        Self {
-            // We convert IDs to strings here to keep SurrealDB happy
-            task_id: c.task_id.0.to_string(),
-            session_id: c.session_id.0.to_string(),
-            timestamp: c.timestamp,
-            state_snapshot: c.state_snapshot.clone(),
-        }
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct SessionRecord {
-    pub created_at: DateTime<Utc>,
-    pub tasks: Vec<Task>,
-    pub current_task: Option<String>,
-}
-
-impl From<&Session> for SessionRecord {
-    fn from(s: &Session) -> Self {
-        Self {
-            created_at: s.created_at,
-            tasks: s.tasks.clone(),
-            current_task: s.current_task.map(|id| id.0.to_string()),
-        }
-    }
-}
-
-impl CheckpointRecord {
-    pub fn into_checkpoint(self, id: Uuid) -> Checkpoint {
-        Checkpoint {
-            id: CheckpointId(id),
-            task_id: TaskId(Uuid::parse_str(&self.task_id).unwrap_or_default()),
-            session_id: SessionId(Uuid::parse_str(&self.session_id).unwrap_or_default()),
-            timestamp: self.timestamp,
-            state_snapshot: self.state_snapshot,
-        }
-    }
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Skill {
+    pub id: Uuid,
+    pub name: String,
+    pub version: String,
+    pub description: String,
+    pub md_content: String,
+    pub template: Option<String>,
+    pub script: Option<String>,
+    pub installed_at: DateTime<Utc>,
 }

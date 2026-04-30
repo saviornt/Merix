@@ -4,10 +4,10 @@ version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
-description = "Shared Rust structs for tasks, sessions, checkpoints, memory items, etc. (PHASE 1)"
+description = "Domain models for Merix PHASE 1 (Session, Task, Checkpoint, Skill)"
 
 [dependencies]
 serde.workspace = true
+serde_json.workspace = true
 uuid.workspace = true
 chrono.workspace = true
-serde_json.workspace = true

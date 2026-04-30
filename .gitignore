@@ -43,6 +43,8 @@ Thumbs.db
 *_INSTRUCT.txt
 AGENTS.md
 PLAN.md
+PLAN_*.md.old
+
 MEMORY.md
 
 # Developer Only Documentation
