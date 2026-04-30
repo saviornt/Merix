@@ -5,7 +5,7 @@ use std::path::Path;
 use surrealdb::Surreal;
 use surrealdb::engine::local::{Db, RocksDb};
 use chrono::{DateTime, Utc};
-use merix_models::{Session, SessionId, TaskId, Checkpoint};
+use merix_models::{Session, SessionId, TaskId, Checkpoint, TaskStatus, StepStatus};
 use tracing::info;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -36,20 +36,69 @@ impl MemoryLayer {
         })
     }
 
-    // === Persistent (SurrealDB) APIs – MANUAL JSON CONSTRUCTION (no enums) ===
+    // === Persistent (SurrealDB) APIs – EXPLICIT ENUM-TO-JSON-STRING CONVERSION ===
     pub async fn save_session(&self, session: &Session) -> Result<()> {
         let mut payload = serde_json::Map::new();
 
-        // Explicitly convert every field (IDs as strings, enums handled inside tasks)
+        // Explicit fields – every enum manually turned into a valid JSON string
         payload.insert("created_at".to_string(), serde_json::to_value(session.created_at)?);
-        payload.insert("tasks".to_string(), serde_json::to_value(&session.tasks)?);
-        payload.insert("current_task".to_string(), match &session.current_task {
+
+        let mut tasks_json: Vec<serde_json::Value> = vec![];
+        for task in &session.tasks {
+            let mut task_map = serde_json::Map::new();
+            task_map.insert("id".to_string(), serde_json::Value::String(task.id.0.to_string()));
+            task_map.insert("description".to_string(), serde_json::Value::String(task.description.clone()));
+
+            // EXPLICIT ENUM → JSON STRING
+            let status_str = match task.status {
+                TaskStatus::Pending => "pending",
+                TaskStatus::Running => "running",
+                TaskStatus::Completed => "completed",
+                TaskStatus::Failed => "failed",
+                TaskStatus::Paused => "paused",
+            };
+            task_map.insert("status".to_string(), serde_json::Value::String(status_str.to_string()));
+
+            let mut steps_json: Vec<serde_json::Value> = vec![];
+            for step in &task.steps {
+                let mut step_map = serde_json::Map::new();
+                step_map.insert("description".to_string(), serde_json::Value::String(step.description.clone()));
+
+                // EXPLICIT ENUM → JSON STRING
+                let step_status_str = match step.status {
+                    StepStatus::Pending => "pending",
+                    StepStatus::Running => "running",
+                    StepStatus::Completed => "completed",
+                    StepStatus::Failed => "failed",
+                };
+                step_map.insert("status".to_string(), serde_json::Value::String(step_status_str.to_string()));
+
+                step_map.insert("output".to_string(), step.output.clone().map_or(serde_json::Value::Null, serde_json::Value::String));
+                if let Some(cp_id) = &step.checkpoint_id {
+                    step_map.insert("checkpoint_id".to_string(), serde_json::Value::String(cp_id.0.to_string()));
+                } else {
+                    step_map.insert("checkpoint_id".to_string(), serde_json::Value::Null);
+                }
+                steps_json.push(serde_json::Value::Object(step_map));
+            }
+            task_map.insert("steps".to_string(), serde_json::Value::Array(steps_json));
+
+            task_map.insert("created_at".to_string(), serde_json::to_value(task.created_at)?);
+            task_map.insert("updated_at".to_string(), serde_json::to_value(task.updated_at)?);
+
+            tasks_json.push(serde_json::Value::Object(task_map));
+        }
+        payload.insert("tasks".to_string(), serde_json::Value::Array(tasks_json));
+
+        // current_task (Option<TaskId>) → plain string or null
+        let current_task_val = match &session.current_task {
             Some(id) => serde_json::Value::String(id.0.to_string()),
             None => serde_json::Value::Null,
-        });
+        };
+        payload.insert("current_task".to_string(), current_task_val);
 
         let _: Option<serde_json::Value> = self.db.upsert(("sessions", session.id.0.to_string()))
-            .content(payload)
+            .content(serde_json::Value::Object(payload))
             .await?;
             
         info!("Session {} persisted in long-term memory", session.id.0);
@@ -84,7 +133,7 @@ impl MemoryLayer {
         payload.insert("state_snapshot".to_string(), checkpoint.state_snapshot.clone());
 
         let _: Option<serde_json::Value> = self.db.upsert(("checkpoints", checkpoint.id.0.to_string()))
-            .content(payload)
+            .content(serde_json::Value::Object(payload))
             .await?;
             
         info!("Checkpoint {} persisted", checkpoint.id.0);
