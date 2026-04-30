@@ -14,7 +14,7 @@ use uuid::Uuid;
 
 #[derive(Parser)]
 #[command(name = "merix")]
-#[command(about = "MerixAI - Local-first self-extending AI runtime (PHASE 1 MVP)", long_about = None)]
+#[command(about = "Merix - Local-first self-extending AI runtime (PHASE 1 MVP)", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
