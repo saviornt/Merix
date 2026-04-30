@@ -36,11 +36,10 @@ impl MemoryLayer {
         })
     }
 
-    // === Persistent (SurrealDB) APIs – EXPLICIT ENUM-TO-JSON-STRING CONVERSION ===
+    // === Persistent (SurrealDB) APIs – EVERY ENUM EXPLICITLY TURNED INTO VALID JSON STRING ===
     pub async fn save_session(&self, session: &Session) -> Result<()> {
         let mut payload = serde_json::Map::new();
 
-        // Explicit fields – every enum manually turned into a valid JSON string
         payload.insert("created_at".to_string(), serde_json::to_value(session.created_at)?);
 
         let mut tasks_json: Vec<serde_json::Value> = vec![];
@@ -49,22 +48,22 @@ impl MemoryLayer {
             task_map.insert("id".to_string(), serde_json::Value::String(task.id.0.to_string()));
             task_map.insert("description".to_string(), serde_json::Value::String(task.description.clone()));
 
-            // EXPLICIT ENUM → JSON STRING
-            let status_str = match task.status {
+            // EXPLICIT ENUM → JSON STRING (TaskStatus)
+            let task_status_str = match task.status {
                 TaskStatus::Pending => "pending",
                 TaskStatus::Running => "running",
                 TaskStatus::Completed => "completed",
                 TaskStatus::Failed => "failed",
                 TaskStatus::Paused => "paused",
             };
-            task_map.insert("status".to_string(), serde_json::Value::String(status_str.to_string()));
+            task_map.insert("status".to_string(), serde_json::Value::String(task_status_str.to_string()));
 
             let mut steps_json: Vec<serde_json::Value> = vec![];
             for step in &task.steps {
                 let mut step_map = serde_json::Map::new();
                 step_map.insert("description".to_string(), serde_json::Value::String(step.description.clone()));
 
-                // EXPLICIT ENUM → JSON STRING
+                // EXPLICIT ENUM → JSON STRING (StepStatus)
                 let step_status_str = match step.status {
                     StepStatus::Pending => "pending",
                     StepStatus::Running => "running",
