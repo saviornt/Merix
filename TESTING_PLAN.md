@@ -69,6 +69,7 @@ cargo run --bin merix-cli -- skill-list
 ### 2.5 Self-Extension Loop
 
 Copy the Session ID from step 2.2 and run:
+
 ```powershell
 cargo run --bin merix-cli -- self-extend --session-id YOUR_SESSION_ID_HERE
 ```

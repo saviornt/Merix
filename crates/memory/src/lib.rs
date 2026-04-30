@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result};
 use dashmap::DashMap;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -29,101 +29,88 @@ impl MemoryLayer {
         let db = Surreal::new::<RocksDb>(&db_path).await?;
         db.use_ns("merix").use_db("runtime").await?;
 
-        info!("MemoryLayer initialized");
+        info!("MemoryLayer initialized (SurrealDB RocksDB persistent + DashMap short-term)");
         Ok(Self {
             db,
             short_term: DashMap::new(),
         })
     }
 
-    /// Robustly cleans SurrealDB internal types into standard JSON domain models.
-    fn clean_record<T: serde::de::DeserializeOwned>(val: surrealdb::Value) -> Result<T> {
-        // Laundry step: Serialize to string and back to Value to strip internal SurrealDB enums
-        let json_str = serde_json::to_string(&val)?;
-        let mut json_val: serde_json::Value = serde_json::from_str(&json_str)?;
+    // === Persistent (SurrealDB) APIs – SIMPLE + RELIABLE ENUM-TO-JSON (models now correct) ===
+    pub async fn save_session(&self, session: &Session) -> Result<()> {
+        let mut payload = serde_json::to_value(session)
+            .map_err(|e| anyhow::anyhow!("Failed to serialize Session to JSON value: {}", e))?;
 
-        if let Some(obj) = json_val.as_object_mut() {
-            if let Some(id_field) = obj.get("id") {
-                // Extracts the UUID part from "table:uuid" or complex ID objects
-                let id_raw = match id_field {
-                    serde_json::Value::String(s) => s.clone(),
-                    other => other.to_string().replace('\"', ""),
-                };
-                
-                let clean_id = id_raw.split(':').last().unwrap_or(&id_raw).to_string();
-                obj.insert("id".to_string(), serde_json::Value::String(clean_id));
-            }
+        if let Some(obj) = payload.as_object_mut() {
+            obj.remove("id");
         }
 
-        Ok(serde_json::from_value(json_val)?)
-    }
-
-    // === Persistent (SurrealDB) APIs ===
-
-    pub async fn save_session(&self, session: &Session) -> Result<()> {
-        let mut payload = serde_json::to_value(session)?;
-        if let Some(obj) = payload.as_object_mut() { obj.remove("id"); }
-
-        // FIX: Using type::thing() to cast parameters to Record IDs
-        self.db.query("UPDATE type::thing('sessions', $id) CONTENT $data")
-            .bind(("id", session.id.0.to_string()))
-            .bind(("data", payload))
+        let _: Option<serde_json::Value> = self.db.upsert(("sessions", session.id.0.to_string()))
+            .content(payload)
             .await?;
             
-        info!("Session {} persisted", session.id.0);
+        info!("Session {} persisted in long-term memory", session.id.0);
         Ok(())
     }
 
     pub async fn load_session(&self, session_id: SessionId) -> Result<Session> {
-        // FIX: Using type::thing() for direct Record ID lookups
-        let mut response = self.db.query("SELECT * FROM type::thing('sessions', $id)")
-            .bind(("id", session_id.0.to_string()))
-            .await?;
-            
-        let val: Option<surrealdb::Value> = response.take(0)?;
-        let val = val.ok_or_else(|| anyhow!("Session {} not found", session_id.0))?;
-
-        Self::clean_record(val)
+        let opt: Option<serde_json::Value> = self.db.select(("sessions", session_id.0.to_string())).await?;
+        
+        match opt {
+            Some(mut value) => {
+                if let Some(obj) = value.as_object_mut() {
+                    obj.insert("id".to_string(), serde_json::Value::String(session_id.0.to_string()));
+                }
+                let session: Session = serde_json::from_value(value)
+                    .map_err(|e| anyhow::anyhow!("Failed to deserialize Session from JSON value: {}", e))?;
+                Ok(session)
+            }
+            None => {
+                info!("Session {} not found — creating empty session on-the-fly", session_id.0);
+                Ok(merix_models::Session::new())
+            }
+        }
     }
 
     pub async fn save_checkpoint(&self, checkpoint: &Checkpoint) -> Result<()> {
-        let mut payload = serde_json::to_value(checkpoint)?;
-        if let Some(obj) = payload.as_object_mut() { obj.remove("id"); }
+        let mut payload = serde_json::to_value(checkpoint)
+            .map_err(|e| anyhow::anyhow!("Failed to serialize Checkpoint to JSON value: {}", e))?;
 
-        self.db.query("UPDATE type::thing('checkpoints', $id) CONTENT $data")
-            .bind(("id", checkpoint.id.0.to_string()))
-            .bind(("data", payload))
+        if let Some(obj) = payload.as_object_mut() {
+            obj.remove("id");
+        }
+
+        let _: Option<serde_json::Value> = self.db.upsert(("checkpoints", checkpoint.id.0.to_string()))
+            .content(payload)
             .await?;
             
+        info!("Checkpoint {} persisted", checkpoint.id.0);
         Ok(())
     }
 
     pub async fn load_latest_checkpoint(&self, task_id: TaskId) -> Result<Option<Checkpoint>> {
-        // This query uses a WHERE clause on a field, so type::thing is NOT needed for $task_id
-        let mut response = self.db
-            .query("SELECT * FROM checkpoints WHERE task_id = $task_id ORDER BY timestamp DESC LIMIT 1")
+        let mut result = self.db.query("SELECT * FROM checkpoints WHERE task_id = $task_id ORDER BY timestamp DESC LIMIT 1")
             .bind(("task_id", task_id.0.to_string()))
             .await?;
             
-        let val: Option<surrealdb::Value> = response.take(0)?;
-        match val {
-            Some(v) => Ok(Some(Self::clean_record(v)?)),
-            None => Ok(None)
+        let opt_value: Option<serde_json::Value> = result.take(0)?;
+        
+        if let Some(mut val) = opt_value {
+            if let Some(obj) = val.as_object_mut() {
+                if let Some(id_val) = obj.get("id") {
+                    if let Some(id_str) = id_val.as_str() {
+                        let clean_id = id_str.split(':').last().unwrap_or(id_str);
+                        obj.insert("id".to_string(), serde_json::Value::String(clean_id.to_string()));
+                    }
+                }
+            }
+            let cp: Checkpoint = serde_json::from_value(val)
+                .map_err(|e| anyhow::anyhow!("Failed to deserialize Checkpoint from JSON value: {}", e))?;
+            Ok(Some(cp))
+        } else {
+            Ok(None)
         }
     }
-
-    pub async fn store_project_memory(&self, key: &str, data: serde_json::Value) -> Result<()> {
-        let mut payload = data;
-        if let Some(obj) = payload.as_object_mut() { obj.remove("id"); }
-
-        self.db.query("UPDATE type::thing('project', $key) CONTENT $data")
-            .bind(("key", key.to_string()))
-            .bind(("data", payload))
-            .await?;
-        Ok(())
-    }
-
-    // === Short-term / Ethereal (Dashmap) APIs ===
 
     pub fn store_ephemeral(&self, key: String, value: String) {
         let item = MemoryItem {
@@ -155,5 +142,12 @@ impl MemoryLayer {
             context.push_str(&format!("Ephemeral: {} = {}\n", entry.key(), entry.value().value));
         }
         Ok(context)
+    }
+
+    pub async fn store_project_memory(&self, key: &str, data: serde_json::Value) -> Result<()> {
+        let _: Option<serde_json::Value> = self.db.upsert(("project", key))
+            .content(data)
+            .await?;
+        Ok(())
     }
 }

@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use std::sync::Arc;
 use tokio::runtime::Runtime;
-use tracing::{info, Level};
+use tracing::{info, warn, Level};
 use tracing_subscriber;
 use merix_core::TaskExecutor;
 use merix_memory::MemoryLayer;
@@ -37,25 +37,23 @@ enum Commands {
     /// List all available MCP tools
     ToolList,
 
-    /// Trigger self-extension on a session
+    /// Trigger self-extension on a session (use "auto" for a new session)
     SelfExtend {
         #[arg(long, required = true)]
         session_id: String,
     },
 
-    /// Show system status (memory, registries)
+    /// Show system status
     Status,
 }
 
 fn main() -> Result<()> {
-    // Initialize tracing
     tracing_subscriber::fmt()
         .with_max_level(Level::INFO)
         .init();
 
     let rt = Runtime::new()?;
     rt.block_on(async {
-        // Initialize all PHASE 1 components
         let storage_path = "data";
         std::fs::create_dir_all(storage_path)?;
 
@@ -65,14 +63,10 @@ fn main() -> Result<()> {
         let task_executor = TaskExecutor::new(storage_path);
         let self_extension = Arc::new(SelfExtensionCore::new(skill_registry.clone(), memory.clone()));
 
-        // Register built-in tools
         tool_registry.register_tool(EchoTool, vec!["test".to_string()]).await?;
         tool_registry.register_tool(MemoryQueryTool, vec!["memory".to_string()]).await?;
-
-        // Register built-in skills
         skill_registry.register_skill(ContextAnalyzerSkill).await?;
 
-        // Parse CLI
         let cli = Cli::parse();
 
         match cli.command {
@@ -86,7 +80,7 @@ fn main() -> Result<()> {
 
             Commands::Resume => {
                 info!("Resuming last task...");
-                let mut session = merix_models::Session::new(); // In full CLI this would load from disk
+                let mut session = merix_models::Session::new();
                 task_executor.resume_task(&mut session).await?;
                 info!("Resume complete");
             }
@@ -107,16 +101,32 @@ fn main() -> Result<()> {
                 }
             }
 
-            Commands::SelfExtend { session_id } => {
-                let session_uuid = Uuid::parse_str(&session_id)?;
-                let session_id = SessionId(session_uuid);
+            Commands::SelfExtend { session_id: input_id } => {
+                let session_id = if input_id.eq_ignore_ascii_case("auto") {
+                    let new_session = merix_models::Session::new();
+                    memory.save_session(&new_session).await?;
+                    info!("Created new session for self-extension: {}", new_session.id.0);
+                    new_session.id
+                } else {
+                    match Uuid::parse_str(&input_id) {
+                        Ok(u) => SessionId(u),
+                        Err(_) => {
+                            warn!("Invalid session ID: {}. Creating new session instead.", input_id);
+                            let new_session = merix_models::Session::new();
+                            memory.save_session(&new_session).await?;
+                            info!("Created new session: {}", new_session.id.0);
+                            new_session.id
+                        }
+                    }
+                };
+
                 info!("Running self-extension on session {}", session_id.0);
                 self_extension.run_self_extension(session_id).await?;
                 info!("Self-extension complete");
             }
 
             Commands::Status => {
-                println!("Merix PHASE 1 MVP Status");
+                println!("MerixAI PHASE 1 MVP Status");
                 println!("  Memory Layer: initialized");
                 println!("  MCP Tools: registered");
                 println!("  Skills: registered");

@@ -1,9 +1,9 @@
 ﻿[workspace.package]
 version = "0.1.0"
 edition = "2021"
-authors = ["Dave <ciscodaveit@x.com>"]
+authors = ["Saviornt"]
 license = "Apache-2.0"
-repository = "https://github.com/CiscoDaveIT/Merix"
+repository = "https://github.com/saviornt/Merix"
 description = "Merix - Local-first self-extending AI runtime (PHASE 1 MVP)"
 rust-version = "1.80"
 
@@ -15,9 +15,9 @@ members = [
     "crates/skills",
     "crates/self-extension",
     "crates/cli",
-    "models",
+    "models/"
 ]
-resolver = "3"
+resolver = "2"
 
 [workspace.dependencies]
 anyhow = "1.0"

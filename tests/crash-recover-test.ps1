@@ -1,7 +1,11 @@
 # tests\test-resume.ps1
 $env:RUST_LOG = "info,merix=debug"
 
+<<<<<<< HEAD
 Write-Host "=== Merix Resume / Crash Recovery Test ===" -ForegroundColor Cyan
+=======
+Write-Host "=== Merix PHASE 1 - Real Resume / Crash Recovery Test ===" -ForegroundColor Cyan
+>>>>>>> 2f6ba3de6402cb75d225655dbbeb6b50574685da
 
 # Start a task in the background
 Write-Host "Starting long-running task in background..." -ForegroundColor Yellow
@@ -10,7 +14,11 @@ $taskProcess = Start-Process -FilePath "target\debug\merix-cli.exe" `
                              -PassThru -NoNewWindow
 
 # Give it time to create checkpoints (adjust if needed)
+<<<<<<< HEAD
 Start-Sleep -Seconds 5
+=======
+Start-Sleep -Milliseconds 800
+>>>>>>> 2f6ba3de6402cb75d225655dbbeb6b50574685da
 
 # Simulate crash by killing the process
 Write-Host "Simulating crash (killing task process)..." -ForegroundColor Red
