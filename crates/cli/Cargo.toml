@@ -10,9 +10,13 @@ description = "Minimal Control Interface (CLI) for Phase 1"
 anyhow.workspace = true
 tokio.workspace = true
 tracing.workspace = true
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
 merix-core = { path = "../core" }
 merix-memory = { path = "../memory" }
 merix-mcp = { path = "../mcp" }
 merix-skills = { path = "../skills" }
 merix-self-extension = { path = "../self-extension" }
+merix-models = { path = "../../models" }
 clap = { version = "4.5", features = ["derive"] }
+uuid.workspace = true
+serde_json.workspace = true

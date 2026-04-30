@@ -4,7 +4,7 @@ edition = "2021"
 authors = ["Dave <ciscodaveit@x.com>"]
 license = "Apache-2.0"
 repository = "https://github.com/CiscoDaveIT/Merix"
-description = "MerixAI - Local-first self-extending AI runtime (PHASE 1 MVP)"
+description = "Merix - Local-first self-extending AI runtime (PHASE 1 MVP)"
 rust-version = "1.80"
 
 [workspace]

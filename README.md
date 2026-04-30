@@ -142,6 +142,102 @@ UI is secondary to execution reliability.
 
 ---
 
+### 8. System and Application Logging
+
+- lighweight logging system
+- generates .json logs for review
+- uses datetime (UTC format) severity levels (0 -> 7), tags, and descriptions
+- custom severity level for application specific logging (8+) including tag and description/output
+- logs can be written to *.logs file or separate database (logs)
+- datetime can be shown in other formats (Local, EST, PST, etc..)
+
+Logs are important for both developers, users and agents.
+
+---
+
+### 9. Vector Embeddings & Semantic Memory
+
+- Local embedding generation using the same llama.cpp engine as the main inference runtime
+- Support for user-provided GGUF embedding models (nomic-embed-text, bge-small-en-v1.5, snowflake-arctic-embed, etc.)
+- Automatic vector embedding of Sessions, Tasks, Steps, Checkpoints, and Project Memory items on save
+- Native vector fields and indexes in SurrealDB (cosine / euclidean / dot-product)
+- Semantic retrieval API in MemoryLayer (`reconstruct_context` becomes hybrid vector + structured)
+- Top-k similarity search with configurable thresholds
+- Full integration with Skills System, MCP Tooling, and Self-Extension Core (skills/tools can query by semantic relevance)
+- Zero-cloud, fully offline, deterministic, and crash-safe
+- Backward-compatible with existing non-vector data
+
+This feature completes the foundation for meaningful long-term memory and enables the self-extension loop to reason over semantic patterns rather than raw text dumps.
+
+---
+
+### 10. Local Model Runtime (LLM Inference Engine)
+
+- llama.cpp-based inference engine via production-ready Rust bindings
+- User-provided GGUF model loading (no bundling — user places models in `models/` or any path)
+- Full CPU + GPU support (CUDA, Metal, ROCm) with automatic hardware detection
+- Deterministic session initialization and reproducible sampling
+- Streaming token generation with configurable context length, temperature, top-p, etc.
+- Direct integration with TaskExecutor: each step can invoke the model for reasoning, planning, or output generation
+- Shared inference context across tasks/steps for efficient memory use
+- Zero-cloud, fully offline, crash-safe, and resumable inference sessions
+- Performance-first design matching or exceeding llama.cpp native speed
+
+This is the final foundational piece of PHASE 1. With this feature the entire intelligence loop (Task → Memory → MCP Tools → Skills → Self-Extension) becomes truly intelligent and no longer relies on stubbed execution.
+
+---
+
+## PHASE 1.5 — Visual Studio Code Plugin
+
+**The developer’s bridge between raw CLI power and polished desktop UX.**
+
+This phase brings Merix directly into the most important tool a developer uses every day — Visual Studio Code — creating a seamless, always-available agent that accelerates development of Merix itself and every subsequent phase.
+
+### Phase 1.5 Objective
+
+> Turn VS Code into the primary interface for Merix, allowing developers to chat, invoke tools/skills, run tasks, and collaborate with the full local intelligence loop without ever leaving their editor.
+
+---
+
+### 1. VS Code Extension Core
+
+- Official VS Code extension (TypeScript + Webview or native LSP + chat panel)
+- Sidebar chat interface with full Merix conversational capabilities
+- Local communication with the running Merix runtime (via Unix socket / named pipe / local HTTP)
+
+### 2. Agent Capabilities Inside VS Code
+
+- Chat with Merix directly in the editor
+- Execute any registered Skill or MCP Tool from chat
+- Context-aware operations: analyze current file, workspace, git diff, open tabs, etc.
+- Agent mode for tasks like “refactor this function”, “add tests”, “explain this error”, “generate documentation”
+
+### 3. Deep Integration with Merix Runtime
+
+- Direct access to MemoryLayer (semantic + structured recall)
+- Full ToolRegistry and SkillRegistry exposure
+- Task creation, resume, and self-extension commands from within VS Code
+- Real-time feedback from running tasks and skill execution
+
+### 4. Developer Productivity Features
+
+- Command palette integration (`Merix: Run Task…`, `Merix: Self-Extend`, etc.)
+- Inline code suggestions and edits powered by the local LLM
+- Session browser and history viewer inside VS Code
+- One-click “Ask Merix about this code” on any selection
+
+### 5. Self-Bootstrapping Value
+
+This phase is intentionally placed in the middle of PHASE 1 because the VS Code plugin will be used to **develop and test Merix itself**. It becomes the primary development interface for all future phases, creating a powerful feedback loop where Merix helps build Merix.
+
+---
+
+**Status:** Planned as the final step of the Foundation Runtime before moving to full desktop UX (PHASE 2).
+
+This phase transforms Merix from a command-line tool into a living development companion that lives inside the editor — the most natural place for a local AI agent to exist.
+
+---
+
 ## PHASE 2 — USER EXPERIENCE (Product Layer)
 
 This phase transforms the runtime into a usable product.
