@@ -36,14 +36,17 @@ impl MemoryLayer {
         })
     }
 
-    // === Persistent (SurrealDB) APIs – SAFE ENUM-TO-JSON CONVERSION ===
+    // === Persistent (SurrealDB) APIs – MANUAL JSON CONSTRUCTION (no enums) ===
     pub async fn save_session(&self, session: &Session) -> Result<()> {
-        let mut payload = serde_json::to_value(session)
-            .map_err(|e| anyhow::anyhow!("Failed to serialize Session to JSON value: {}", e))?;
+        let mut payload = serde_json::Map::new();
 
-        if let Some(obj) = payload.as_object_mut() {
-            obj.remove("id");
-        }
+        // Explicitly convert every field (IDs as strings, enums handled inside tasks)
+        payload.insert("created_at".to_string(), serde_json::to_value(session.created_at)?);
+        payload.insert("tasks".to_string(), serde_json::to_value(&session.tasks)?);
+        payload.insert("current_task".to_string(), match &session.current_task {
+            Some(id) => serde_json::Value::String(id.0.to_string()),
+            None => serde_json::Value::Null,
+        });
 
         let _: Option<serde_json::Value> = self.db.upsert(("sessions", session.id.0.to_string()))
             .content(payload)
@@ -73,12 +76,12 @@ impl MemoryLayer {
     }
 
     pub async fn save_checkpoint(&self, checkpoint: &Checkpoint) -> Result<()> {
-        let mut payload = serde_json::to_value(checkpoint)
-            .map_err(|e| anyhow::anyhow!("Failed to serialize Checkpoint to JSON value: {}", e))?;
+        let mut payload = serde_json::Map::new();
 
-        if let Some(obj) = payload.as_object_mut() {
-            obj.remove("id");
-        }
+        payload.insert("task_id".to_string(), serde_json::Value::String(checkpoint.task_id.0.to_string()));
+        payload.insert("session_id".to_string(), serde_json::Value::String(checkpoint.session_id.0.to_string()));
+        payload.insert("timestamp".to_string(), serde_json::to_value(checkpoint.timestamp)?);
+        payload.insert("state_snapshot".to_string(), checkpoint.state_snapshot.clone());
 
         let _: Option<serde_json::Value> = self.db.upsert(("checkpoints", checkpoint.id.0.to_string()))
             .content(payload)
