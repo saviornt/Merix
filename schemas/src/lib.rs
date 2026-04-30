@@ -15,7 +15,7 @@ pub struct TaskId(pub Uuid);
 pub struct CheckpointId(pub Uuid);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "lowercase")]
 pub enum TaskStatus {
     Pending,
     Running,
@@ -25,7 +25,7 @@ pub enum TaskStatus {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "lowercase")]
 pub enum StepStatus {
     Pending,
     Running,
@@ -113,6 +113,55 @@ impl Checkpoint {
             session_id,
             timestamp: Utc::now(),
             state_snapshot,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CheckpointRecord {
+    pub task_id: String,
+    pub session_id: String,
+    pub timestamp: DateTime<Utc>,
+    pub state_snapshot: serde_json::Value,
+}
+
+impl From<&Checkpoint> for CheckpointRecord {
+    fn from(c: &Checkpoint) -> Self {
+        Self {
+            // We convert IDs to strings here to keep SurrealDB happy
+            task_id: c.task_id.0.to_string(),
+            session_id: c.session_id.0.to_string(),
+            timestamp: c.timestamp,
+            state_snapshot: c.state_snapshot.clone(),
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SessionRecord {
+    pub created_at: DateTime<Utc>,
+    pub tasks: Vec<Task>,
+    pub current_task: Option<String>,
+}
+
+impl From<&Session> for SessionRecord {
+    fn from(s: &Session) -> Self {
+        Self {
+            created_at: s.created_at,
+            tasks: s.tasks.clone(),
+            current_task: s.current_task.map(|id| id.0.to_string()),
+        }
+    }
+}
+
+impl CheckpointRecord {
+    pub fn into_checkpoint(self, id: Uuid) -> Checkpoint {
+        Checkpoint {
+            id: CheckpointId(id),
+            task_id: TaskId(Uuid::parse_str(&self.task_id).unwrap_or_default()),
+            session_id: SessionId(Uuid::parse_str(&self.session_id).unwrap_or_default()),
+            timestamp: self.timestamp,
+            state_snapshot: self.state_snapshot,
         }
     }
 }

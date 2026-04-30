@@ -18,15 +18,61 @@ impl TaskExecutor {
 
     pub async fn save_session(&self, session: &Session) -> Result<()> {
         debug_val("core::save_session - session", session);
-        
+
+        // Safe manual JSON construction — no enums reach serde directly
+        let mut tasks_json = vec![];
+        for task in &session.tasks {
+            let mut steps_json = vec![];
+            for step in &task.steps {
+                let step_status_str = match step.status {
+                    StepStatus::Pending => "pending",
+                    StepStatus::Running => "running",
+                    StepStatus::Completed => "completed",
+                    StepStatus::Failed => "failed",
+                };
+                steps_json.push(serde_json::json!({
+                    "description": step.description,
+                    "status": step_status_str,
+                    "output": step.output,
+                    "checkpoint_id": step.checkpoint_id.as_ref().map(|id| id.0.to_string())
+                }));
+            }
+
+            let task_status_str = match task.status {
+                TaskStatus::Pending => "pending",
+                TaskStatus::Running => "running",
+                TaskStatus::Completed => "completed",
+                TaskStatus::Failed => "failed",
+                TaskStatus::Paused => "paused",
+            };
+
+            tasks_json.push(serde_json::json!({
+                "id": task.id.0.to_string(),
+                "description": task.description,
+                "status": task_status_str,
+                "steps": steps_json,
+                "created_at": task.created_at,
+                "updated_at": task.updated_at
+            }));
+        }
+
+        let current_task_val = match &session.current_task {
+            Some(id) => serde_json::Value::String(id.0.to_string()),
+            None => serde_json::Value::Null,
+        };
+
+        let json_value = serde_json::json!({
+            "id": session.id.0.to_string(),
+            "created_at": session.created_at,
+            "tasks": tasks_json,
+            "current_task": current_task_val
+        });
+
+        let json = serde_json::to_string_pretty(&json_value)?;
         let path = Path::new(&self.storage_path).join(format!("session_{}.json", session.id.0));
-        //debug_val("core::save_session - path", path);
-        
-        let json = serde_json::to_string_pretty(session)?;
-        //debug_val("core::save_session - json", json);
-        
         fs::write(&path, json).await?;
-        info!("Session {} saved", session.id.0);
+
+        info!("Session {} saved (safe serialization)", session.id.0);
         Ok(())
     }
 
