@@ -41,19 +41,11 @@ It is designed as:
 
 ---
 
-## PHASE 1 — PRIMARY MVP (Foundation Runtime)
-
 **Development Discipline (v3.1):**
 
 - All work should follow a `PLAN.md` checklist that is designated for that Phase/Feature.
-- One checkbox at a time, e.g.,: Full test (`cargo check --workspace` + CLI smoke tests + resilience checks), before moving forward.
-- Never implement any later-phase feature until PHASE 1 is 100% complete and stable.
-
-See `PLAN.md` for the live checklist.
-
-### Core Objective
-
-A stable local AI runtime that can execute tasks, persist state, resume execution, safely invoke tools via MCP, and evolve behavior via Skills — forming the **minimal self-contained intelligence loop**.
+- One checkbox (feat) at a time, e.g.,: Full test (`cargo check --workspace` + CLI smoke tests + resilience checks), before moving forward.
+- Never implement any later-phase feature until the previous phase is 100% complete and stable.
 
 ### Architecture Principles (Non-Negotiable)
 
@@ -121,13 +113,26 @@ Merix/
 ```
 
 > The executor's responsibility is to convert plans -> executable graphs. Those graphs run independent of LLM.
+
 > The planner allows us to swap planning strategies and add symbolic planners
+
 > Examples of the events crate are `TaskStarted`, `ToolFailed`, `MemoryUpdated`, `SkillLearned`
+
 > The context crate is essential for growing context windows and for multi-agent coordination
+
 > The reflection crate also tracks outcomes, adjusts routing decisions and evolves behavior over time.
+
 > The world_model builds internal representations (entities, systems, dependencies), tracks causal relationships, supports reasoning beyond text.
+
 > Orchestration handles planning/control.
+
 > Coordination handles real-time interactions.
+
+## PHASE 1 — PRIMARY MVP (Foundation Runtime)
+
+### Core Objective
+
+A stable local AI runtime that can execute tasks, persist state, resume execution, safely invoke tools via MCP, and evolve behavior via Skills — forming the **minimal self-contained intelligence loop**.
 
 ### Directory Structure (MCP release - evolve over time)
 

@@ -1,0 +1,54 @@
+# Merix PHASE 1 Development PLAN.md
+
+Version 3.1 — 4-Pillar Recursive Approach (CLI → Logging → Testing → Feature)
+
+## Development Discipline
+
+Follow **exactly** (never skip order):
+
+### Three Pillars FIRST (strict sequence)
+
+1. Pillar 1: CLI — Minimal working CLI foundation (clap, workspace, basic commands)
+2. Pillar 2: Logging — Structured observability (tracing + tracing-subscriber)
+3. Pillar 3: Testing — Comprehensive test framework (unit, integration, CLI E2E, resilience)
+
+### Recursive Feature Loop (after Pillars are complete)
+
+For every subsequent Phase 1 feature:
+
+1. Implement the feature in the correct crate
+2. Expose it via new CLI subcommand(s)
+3. Add/update all tests
+4. Run full test suite
+5. Verify zero warnings, crash-safe, resumable
+6. Mark checkbox **only after** tests pass
+7. Repeat
+
+## Test Commands (run after EVERY major step)
+
+cargo check --workspace
+cargo test --workspace
+cargo run --bin merix -- --help
+
+## Phase 1 Checklist
+
+### Three Pillars
+
+- [x] Pillar 1: CLI Foundation (workspace + crates/cli)
+- [x] Pillar 2: Logging Infrastructure
+- [x] Pillar 3: Testing Framework
+
+### Feature Loop (one at a time, CLI + test before next)
+
+- [ ] Schemas crate (domain models)
+- [ ] MemoryLayer (Persistent SurrealDB + Ethereal Dashmap)
+- [ ] Core runtime (task execution, basic session model)
+- [ ] MCP Tooling System + registry
+- [ ] Skills Registry & loading
+- [ ] Planner stub
+- [ ] Executor stub
+- [ ] Self-Extension foundation
+- [ ] Full Phase 1 integration + end-to-end smoke test
+- [ ] Final stability verification
+
+*Last updated: May 01, 2026 — aligned with README.md v3.1 + Self-Instruction Set v2.3*
