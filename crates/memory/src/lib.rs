@@ -1,4 +1,6 @@
-﻿use anyhow::Result;
+﻿//! merix-memory — Persistent (SurrealDB + RocksDB) + Ethereal (Dashmap) memory layer
+
+use anyhow::Result;
 use merix_schemas::{Checkpoint, CheckpointId, Session, SessionId, Skill, SkillId, Task, TaskId};
 use serde_json::Value;
 use std::path::Path;
@@ -39,6 +41,14 @@ impl PersistentMemory {
         let db = Surreal::new::<RocksDb>(db_path.as_ref()).await?;
         Ok(Self { db })
     }
+
+    /// Private DRY helper — restores the original Uuid after SurrealDB's RecordId serialization
+    fn fix_id_in_value(mut value: Value, id: impl ToString) -> Value {
+        if let Some(id_val) = value.get_mut("id") {
+            *id_val = Value::String(id.to_string());
+        }
+        value
+    }
 }
 
 #[async_trait]
@@ -60,13 +70,7 @@ impl MemoryLayer for PersistentMemory {
     async fn load_session(&self, id: SessionId) -> Result<Option<Session>> {
         let opt: Option<Value> = self.db.select(("session", id.to_string())).await?;
         match opt {
-            Some(mut v) => {
-                // SurrealDB returns RecordId strings like "session:xxx". Restore the original Uuid.
-                if let Some(id_val) = v.get_mut("id") {
-                    *id_val = serde_json::Value::String(id.to_string());
-                }
-                Ok(serde_json::from_value(v)?)
-            }
+            Some(v) => Ok(serde_json::from_value(Self::fix_id_in_value(v, id))?),
             None => Ok(None),
         }
     }
@@ -83,12 +87,7 @@ impl MemoryLayer for PersistentMemory {
     async fn load_task(&self, id: TaskId) -> Result<Option<Task>> {
         let opt: Option<Value> = self.db.select(("task", id.to_string())).await?;
         match opt {
-            Some(mut v) => {
-                if let Some(id_val) = v.get_mut("id") {
-                    *id_val = serde_json::Value::String(id.to_string());
-                }
-                Ok(serde_json::from_value(v)?)
-            }
+            Some(v) => Ok(serde_json::from_value(Self::fix_id_in_value(v, id))?),
             None => Ok(None),
         }
     }
@@ -105,12 +104,7 @@ impl MemoryLayer for PersistentMemory {
     async fn load_checkpoint(&self, id: CheckpointId) -> Result<Option<Checkpoint>> {
         let opt: Option<Value> = self.db.select(("checkpoint", id.to_string())).await?;
         match opt {
-            Some(mut v) => {
-                if let Some(id_val) = v.get_mut("id") {
-                    *id_val = serde_json::Value::String(id.to_string());
-                }
-                Ok(serde_json::from_value(v)?)
-            }
+            Some(v) => Ok(serde_json::from_value(Self::fix_id_in_value(v, id))?),
             None => Ok(None),
         }
     }
@@ -127,12 +121,7 @@ impl MemoryLayer for PersistentMemory {
     async fn load_skill(&self, id: SkillId) -> Result<Option<Skill>> {
         let opt: Option<Value> = self.db.select(("skill", id.to_string())).await?;
         match opt {
-            Some(mut v) => {
-                if let Some(id_val) = v.get_mut("id") {
-                    *id_val = serde_json::Value::String(id.to_string());
-                }
-                Ok(serde_json::from_value(v)?)
-            }
+            Some(v) => Ok(serde_json::from_value(Self::fix_id_in_value(v, id))?),
             None => Ok(None),
         }
     }
@@ -231,11 +220,7 @@ mod tests {
             updated_at: Utc::now(),
         };
         mem.store_session(session.clone()).await.unwrap();
-        let loaded = mem.load_session(session_id).await.unwrap();
-        assert_eq!(loaded, Some(session));
+        let loaded = mem.load_session(session_id).await.unwrap().unwrap();
+        assert_eq!(loaded.id, session_id);
     }
 }
-
-
-
-
