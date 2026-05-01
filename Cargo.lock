@@ -2340,6 +2340,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "merix-core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "merix-memory",
+ "merix-schemas",
+ "merix-utilities",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
 name = "merix-memory"
 version = "0.1.0"
 dependencies = [

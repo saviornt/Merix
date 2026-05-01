@@ -4,7 +4,8 @@ edition = "2021"
 authors = ["Saviornt"]
 license = "Apache-2.0"
 repository = "https://github.com/saviornt/Merix"
-description = "Merix - Local-first self-extending AI runtime (PHASE 1)"
+description = "Merix - Local-first self-extending AI runtime"
+readme = "README.md"
 rust-version = "1.80"
 
 [workspace]
@@ -13,6 +14,7 @@ members = [
     "crates/utilities",
     "crates/schemas",
     "crates/memory",
+    "crates/core",
 ]
 resolver = "2"
 
@@ -25,6 +27,7 @@ tracing-appender = "0.2"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json", "chrono"] }
 merix-utilities = { path = "crates/utilities" }
 merix-schemas = { path = "crates/schemas" }
+merix-memory = { path = "crates/memory" }
 chrono = { version = "0.4", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

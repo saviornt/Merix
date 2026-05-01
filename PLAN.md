@@ -42,7 +42,9 @@ cargo run --bin merix -- --help
 
 - [x] Schemas crate (domain models)
 - [x] MemoryLayer (Persistent SurrealDB + Ethereal Dashmap)
-- [ ] Core runtime (task execution, basic session/task model)
+- [ ] Core runtime (task execution, basic session/task model) ← already done
+- [ ] LLM runtime optimizations (GPU/VRAM scheduling, memory pressure, deterministic inference config)
+- [ ] Registry / MCP Tooling System
 - [ ] Registry (unified registry for tools, skills, agents, capabilities)
 - [ ] MCP Tooling System + registry
 - [ ] Skills Registry & loading
@@ -51,7 +53,10 @@ cargo run --bin merix -- --help
 - [ ] Agents crate (basic identity + permissions)
 - [ ] Sandbox stub
 - [ ] Reflection stub
+- [ ] Full code review and benchmarks for additional optimization, security
 - [ ] Full Phase 1 integration + end-to-end smoke test (single agent loop)
 - [ ] Final stability verification
+
+> We need to also implement proper GPU/VRAM scheduling and other optimization techniques during this phase
 
 *Last updated: May 01, 2026 — aligned with README.md v3.1*
