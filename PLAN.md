@@ -42,13 +42,16 @@ cargo run --bin merix -- --help
 
 - [ ] Schemas crate (domain models)
 - [ ] MemoryLayer (Persistent SurrealDB + Ethereal Dashmap)
-- [ ] Core runtime (task execution, basic session model)
+- [ ] Core runtime (task execution, basic session/task model)
+- [ ] Registry (unified registry for tools, skills, agents, capabilities)
 - [ ] MCP Tooling System + registry
 - [ ] Skills Registry & loading
 - [ ] Planner stub
 - [ ] Executor stub
-- [ ] Self-Extension foundation
-- [ ] Full Phase 1 integration + end-to-end smoke test
+- [ ] Agents crate (basic identity + permissions)
+- [ ] Sandbox stub
+- [ ] Reflection stub
+- [ ] Full Phase 1 integration + end-to-end smoke test (single agent loop)
 - [ ] Final stability verification
 
-*Last updated: May 01, 2026 — aligned with README.md v3.1 + Self-Instruction Set v2.3*
+*Last updated: May 01, 2026 — aligned with README.md v3.1*
