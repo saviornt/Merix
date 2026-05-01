@@ -4,7 +4,16 @@ version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
-description = "Persistent (SurrealDB) + Ethereal (Dashmap) memory layer (PHASE 1)"
+description = "Persistent (SurrealDB) + Ethereal (Dashmap) MemoryLayer"
 
 [dependencies]
 merix-schemas = { workspace = true }
+surrealdb = { workspace = true }
+dashmap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+async-trait = { workspace = true }

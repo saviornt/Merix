@@ -1,8 +1,8 @@
-//! Merix Schemas — Domain models for sessions, tasks, checkpoints, skills and core entities.
-
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
+﻿use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
+
+// Re-export Uuid so other crates can use it directly
+pub use uuid::Uuid;
 
 /// Unique identifier for a session
 pub type SessionId = Uuid;
@@ -30,7 +30,7 @@ pub enum TaskStatus {
     Paused,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Session {
     pub id: SessionId,
     pub title: Option<String>,
@@ -39,7 +39,7 @@ pub struct Session {
     pub updated_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Task {
     pub id: TaskId,
     pub session_id: SessionId,
@@ -51,7 +51,7 @@ pub struct Task {
     pub parent_id: Option<TaskId>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Checkpoint {
     pub id: CheckpointId,
     pub task_id: TaskId,
@@ -60,7 +60,7 @@ pub struct Checkpoint {
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Skill {
     pub id: SkillId,
     pub name: String,
