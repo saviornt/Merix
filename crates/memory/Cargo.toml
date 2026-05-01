@@ -1,0 +1,10 @@
+﻿[package]
+name = "merix-memory"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Persistent (SurrealDB) + Ethereal (Dashmap) memory layer (PHASE 1)"
+
+[dependencies]
+merix-schemas = { workspace = true }

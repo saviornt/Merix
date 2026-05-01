@@ -1,0 +1,20 @@
+﻿[package]
+name = "merix-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Minimal Control Interface (Pillar 1 CLI foundation)"
+
+[[bin]]
+name = "merix"
+path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+merix-utilities = { workspace = true }
+tracing = { workspace = true }
+tracing-appender = { workspace = true }
+tracing-subscriber = { workspace = true }

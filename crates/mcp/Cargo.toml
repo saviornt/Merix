@@ -1,0 +1,10 @@
+﻿[package]
+name = "merix-mcp"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "MCP Tooling System + registry (PHASE 1)"
+
+[dependencies]
+merix-schemas = { workspace = true }

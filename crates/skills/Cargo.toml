@@ -1,0 +1,10 @@
+﻿[package]
+name = "merix-skills"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Skills registry and loading (PHASE 1)"
+
+[dependencies]
+merix-schemas = { workspace = true }

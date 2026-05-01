@@ -1,0 +1,9 @@
+﻿[package]
+name = "merix-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Task execution, LLM runtime, basic session/task model (PHASE 1)"
+
+[dependencies]
