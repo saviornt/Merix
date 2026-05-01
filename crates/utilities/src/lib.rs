@@ -1,19 +1,20 @@
-﻿//! Merix-Utilities — Logging Infrastructure
-//! Structured, crash-safe, resumable observability with per-run timestamped files
-//! and session separators.
+﻿//! Merix-Utilities — Shared helpers and centralized configuration.
 
-use chrono::Local;
+pub mod config;
+
 use tracing_subscriber::{
     fmt::{self, time::ChronoLocal},
     layer::SubscriberExt,
     util::SubscriberInitExt,
     EnvFilter,
 };
+use chrono::Local;
+use std::path::PathBuf;
 
 /// Configuration for logging behavior
 pub struct LogConfig {
-    /// Directory for log files (default: ./logs)
-    pub log_dir: Option<std::path::PathBuf>,
+    /// Optional override for log directory (takes precedence over auto-detection)
+    pub log_dir: Option<PathBuf>,
 }
 
 /// Initialize structured logging (per-run timestamped file + session header).
@@ -26,13 +27,10 @@ pub fn init_logging(config: LogConfig) -> anyhow::Result<()> {
         .with_timer(ChronoLocal::rfc_3339())
         .pretty();
 
-    // Per-run timestamped filename: merix_2026-05-01.log
-    let timestamp = Local::now().format("merix_%Y-%m-%d.log");
-    let log_dir = config.log_dir.unwrap_or_else(|| {
-        std::env::current_dir().unwrap_or_default().join("logs")
-    });
+    let log_dir = config.log_dir.unwrap_or_else(config::MerixConfig::get_log_directory);
     std::fs::create_dir_all(&log_dir)?;
 
+    let timestamp = Local::now().format("merix_%Y-%m-%d.log");
     let log_file_path = log_dir.join(timestamp.to_string());
 
     let file = std::fs::OpenOptions::new()
@@ -118,7 +116,6 @@ mod tests {
         assert!(result.is_ok());
     }
 
-    // Async test ready for when we need it (future-proof)
     #[tokio::test]
     async fn test_async_recovery_path() {
         let result = recovery::log_and_continue("async error path");

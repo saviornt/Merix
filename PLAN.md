@@ -40,7 +40,7 @@ cargo run --bin merix -- --help
 
 ### Feature Loop (one at a time, CLI + test before next)
 
-- [ ] Schemas crate (domain models)
+- [x] Schemas crate (domain models)
 - [ ] MemoryLayer (Persistent SurrealDB + Ethereal Dashmap)
 - [ ] Core runtime (task execution, basic session/task model)
 - [ ] Registry (unified registry for tools, skills, agents, capabilities)
