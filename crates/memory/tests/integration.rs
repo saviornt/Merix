@@ -6,7 +6,7 @@ use chrono::Utc;
 async fn test_memory_full_integration_roundtrip() {
     // 1. Create both memory layers
     let db_path = std::env::temp_dir().join("merix_integration_test.db");
-    let persistent = PersistentMemory::new(db_path.as_path()).await.unwrap();
+    let persistent = PersistentMemory::new_at_path(db_path.as_path()).await.unwrap();
     persistent.init().await.unwrap();
 
     let ethereal = EtherealMemory::new();
@@ -93,3 +93,5 @@ async fn test_memory_full_integration_roundtrip() {
 
     println!("✅ Full MemoryLayer integration roundtrip test passed!");
 }
+
+

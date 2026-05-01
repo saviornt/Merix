@@ -2348,6 +2348,7 @@ dependencies = [
  "chrono",
  "dashmap",
  "merix-schemas",
+ "merix-utilities",
  "serde",
  "serde_json",
  "surrealdb",

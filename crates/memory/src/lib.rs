@@ -26,8 +26,16 @@ pub struct PersistentMemory {
 }
 
 impl PersistentMemory {
-    /// Creates a new PersistentMemory (async because Surreal::new::<RocksDb> is async in v3)
-    pub async fn new(db_path: impl AsRef<Path>) -> Result<Self> {
+    /// Creates a new PersistentMemory using the configured data directory by default
+    pub async fn new() -> Result<Self> {
+        let data_dir = merix_utilities::config::MerixConfig::get_data_directory();
+        let db_path = data_dir.join("merix.db");
+        let db = Surreal::new::<RocksDb>(db_path).await?;
+        Ok(Self { db })
+    }
+
+    /// Creates a new PersistentMemory at a custom path (for tests)
+    pub async fn new_at_path(db_path: impl AsRef<Path>) -> Result<Self> {
         let db = Surreal::new::<RocksDb>(db_path.as_ref()).await?;
         Ok(Self { db })
     }
@@ -206,9 +214,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_persistent_memory_basic() {
-        let db_path = std::env::temp_dir().join("merix_test.db");
-        let mem = PersistentMemory::new(db_path.as_path()).await.unwrap();
-        mem.init().await.unwrap();
+        let db_path = std::env::temp_dir().join("merix_integration_test.db");
+        let persistent = PersistentMemory::new_at_path(db_path.as_path()).await.unwrap();
+        persistent.init().await.unwrap();
     }
 
     #[tokio::test]
@@ -227,3 +235,7 @@ mod tests {
         assert_eq!(loaded, Some(session));
     }
 }
+
+
+
+

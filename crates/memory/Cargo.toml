@@ -8,6 +8,7 @@ description = "Persistent (SurrealDB) + Ethereal (Dashmap) MemoryLayer"
 
 [dependencies]
 merix-schemas = { workspace = true }
+merix-utilities = { workspace = true }
 surrealdb = { workspace = true }
 dashmap = { workspace = true }
 serde = { workspace = true }
