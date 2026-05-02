@@ -36,7 +36,7 @@ When installing VS 2026, select the following options:
 
 ### NVIDIA Developer Toolkit Details
 
-After installing the CUDA Toolkit 13.2 Update 1, for whatever reason NVIDIA decided not to include it into the PATH. So...
+After installing the CUDA Toolkit 13.2 Update 2, for whatever reason NVIDIA decided not to include it into the PATH. So...
 
 1. WinKey -> Type `Environment variables` -> Press enter.
 2. Press `Environment Variables`
