@@ -103,3 +103,24 @@ This is where it gets annoying, we have to use the `x64 Native Tools Prompt for 
 1. `cd /d {X:\WHERE-EVER-YOUR-PROJECT-IS}` (take out the `{}` and add the actual directory). Press enter.
 2. `cargo clean` -> `cargo check --workspace`
 3. It *should* build correctly.
+
+### Unverified Developer Prompt for VS Code
+
+**I haven't tested this, yet... but it should work *in theory*:**
+
+To get the x64 Native Tools Command Prompt inside of VS Code (activating `vcvars64.bat` within the terminal), use the following inside of your project's `.vscode/settings.json` file:
+
+```json
+{
+    "terminal.integrated.profiles.windows": {
+    "MSVC Dev Prompt": {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "args": [
+        "/k",
+        "\"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\""
+      ]
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "MSVC Dev Prompt"
+}
+```
