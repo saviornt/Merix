@@ -1,6 +1,6 @@
 # Merix
 
-*Last updated: May 2, 2026 — Version 3.3*  
+*Last updated: May 2, 2026 — Version 1.4*  
 
 **The rogue messenger that delivers forbidden intelligence.**
 
@@ -87,6 +87,7 @@ Merix/
 ├── interop/                # Normalizes external interfaces and prevents pollution of core logic when using Apps
 ├── interface/              # Allows for voice, real-time streams, multimodal input interactions with the agent(s)
 ├── knowledge/              # Structured knowledge reasoning using knowledge graphs, entity linking and semantic relationships.
+├── llama/                  # Provides the API, management and optimizations for the llama backend.
 ├── memory/                 # Persistent (SurrealDB) + Ethereal (Dashmap) — (separated into 2 implementations)
 ├── observability/          # Provides traces, spans, decision logs, replay systems
 ├── orchestrator/           # Handles agent-to-agent protocols (A2A), role assignment, concensus / arbitration (see note)
@@ -141,7 +142,7 @@ To support the above capabilities, this is the current proposed directory struct
 ```text
 Merix/
 ├── crates/
-│   ├── core/              # Task execution, LLM runtime, basic session/task model
+│   ├── core/              # Task execution, session/task lifecycle, and high-level orchestration
 │   ├── memory/            # Persistent (SurrealDB) + Ethereal (Dashmap) — (separated into 2 implementations)
 │   ├── mcp/               # MCP Tooling System + registry
 │   ├── skills/            # Skills loading, registry, self-generation
@@ -151,7 +152,9 @@ Merix/
 │   ├── executor/          # Execution graphs, scheduling, retry, recovery
 │   ├── reflection/        # Evaluation, reflection, learning from trajectories
 │   ├── sandbox/           # Security, isolation, resource limits
-│   ├── schemas/           # Domain models for Database & In-Memory data structures (Session, Task, Checkpoint, Skill, etc.)
+│   ├── schemas/           # Domain models for Database & In-Memory data structures
+│   ├── llama/             # Llama backend API, InferenceConfig, model loading, and NVIDIA GPU optimizations
+│   ├── resources/         # System resource management (CPU/GPU detection, VRAM budgeting, memory pressure)
 │   ├── registry/          # Unified registry for tools, skills, agents, capabilities
 │   ├── observability/     # Events, tracing, logging, metrics
 │   ├── knowledge/         # RAG, embeddings, knowledge graph, world_model
@@ -169,7 +172,7 @@ Merix/
 
 ### Libraries & Frameworks
 
-The following frameworks and libraries will be used within Merix. This is the **exact minimal set** for **Phase 1** (Foundation Runtime) and will be declared in the root `Cargo.toml` under `[workspace.dependencies]`.
+The following frameworks and libraries will be used within Merix. This is the **minimal set** for **Phase 1** (Foundation Runtime) and will be declared in the root `Cargo.toml` under `[workspace.dependencies]`.
 
 - `surrealdb = { version = "3.0", features = ["kv-rocksdb"] }` → Embedded multi-model database (persistent long-term memory + native vector indexing)
 - `dashmap = { version = "6.1" }` → High-performance concurrent HashMap for ethereal/short-term memory

@@ -1,6 +1,8 @@
 # Merix PHASE 1 Development PLAN.md
 
-Version 3.1 — 4-Pillar Recursive Approach (CLI → Logging → Testing → Feature)
+*Last updated: May 01, 2026 — aligned with README.md v1.4*
+
+4-Pillar Recursive Approach (CLI → Logging → Testing → Feature)
 
 ## Development Discipline
 
@@ -42,11 +44,13 @@ cargo run --bin merix -- --help
 
 - [x] Schemas crate (domain models)
 - [x] MemoryLayer (Persistent SurrealDB + Ethereal Dashmap)
+- [ ] Create resources crate — system resource management (CPU/GPU/VRAM/memory pressure)
+- [ ] Create llama crate — llama-cpp-2 API, InferenceConfig, model loading, and GPU optimizations
 - [ ] Core runtime
   - [ ] Task execution, session/task model
-  - [ ] Project-wide code optimization pass
+  - [ ] System resource management and optimizations
   - [ ] llama-cpp-2 implementation
-  - [ ] LLM runtime optimizations (GPU/VRAM scheduling, memory pressure, deterministic inference config)
+- [ ] Project-wide code optimization pass
 - [ ] Registry / MCP Tooling System
 - [ ] Registry (unified registry for tools, skills, agents, capabilities)
 - [ ] MCP Tooling System + registry
@@ -61,5 +65,3 @@ cargo run --bin merix -- --help
 - [ ] Final stability verification
 
 > We need to also implement proper GPU/VRAM scheduling and other optimization techniques during this phase
-
-*Last updated: May 01, 2026 — aligned with README.md v3.1*
