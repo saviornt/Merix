@@ -1,6 +1,6 @@
 # Merix
 
-**README Version:** 3.1
+*Last updated: May 2, 2026 — Version 3.3*  
 
 **The rogue messenger that delivers forbidden intelligence.**
 
@@ -503,16 +503,3 @@ Merix ultimately becomes:
 ---
 
 **License:** Apache 2.0  
-**Repository:** https://github.com/saviornt/Merix  
-
-*Last updated: April 30, 2026 — Version 3.1*  
-This README is now **fully self-contained** for easy copy-paste. It incorporates the fresh-start organization I would use if we deleted the repo and started from zero, enforces the `PLAN.md` test-driven discipline, and restores every detail from the original vision (including Phase 1.5/2/3) so you always know exactly what comes next — but only after PHASE 1 is complete and tested.
-
----
-
-**Next Action (per PLAN.md discipline):**  
-Replace your current `README.md` with the content above, then continue with the next unchecked item in your `PLAN.md`.  
-
-When you’re ready for the next file (e.g. `crates/core/src/lib.rs` after MemoryLayer is confirmed working), just reply with the checkbox you just completed and the test output.  
-
-The system remains 100% local-first, resumable, crash-safe, and aligned with the original vision. Ready for your next command.

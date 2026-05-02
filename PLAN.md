@@ -42,8 +42,11 @@ cargo run --bin merix -- --help
 
 - [x] Schemas crate (domain models)
 - [x] MemoryLayer (Persistent SurrealDB + Ethereal Dashmap)
-- [x] Core runtime (task execution, basic session/task model) ← already done
-- [ ] LLM runtime optimizations (GPU/VRAM scheduling, memory pressure, deterministic inference config)
+- [ ] Core runtime
+  - [ ] Task execution, session/task model
+  - [ ] Project-wide code optimization pass
+  - [ ] llama-cpp-2 implementation
+  - [ ] LLM runtime optimizations (GPU/VRAM scheduling, memory pressure, deterministic inference config)
 - [ ] Registry / MCP Tooling System
 - [ ] Registry (unified registry for tools, skills, agents, capabilities)
 - [ ] MCP Tooling System + registry
