@@ -49,12 +49,12 @@ After installing the CUDA Toolkit 13.2 Update 1, for whatever reason NVIDIA deci
 
     - "Variable name": `CUDACXX`, "Variable value": `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.2\bin\nvcc.exe`
     - "Variable name": `CUDAToolkit_ROOT`, "Variable value": `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.2`
-    - "Variable name": `CudaToolkitDir`, "Variable value": `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\V13.2`
+    - "Variable name": `CudaToolkitDir`, "Variable value": `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.2`
     - "Variable name": `UV_TORCH_BACKEND`, "Variable value": `cu130` (only if you're working with Pytorch version 2.11.0 with CUDA 13.0)
 
 9. Click `Ok`, `Ok` & restart your computer - or at least, log out and log back in.
 
-### Install Ninja compiler
+### Install Ninja builder
 
 Open powershell, use one of these:
 
