@@ -9,6 +9,7 @@ description = "Task execution + LLM runtime foundation"
 [dependencies]
 merix-schemas = { workspace = true }
 merix-memory = { workspace = true }
+merix-llama = { workspace = true }
 merix-utilities = { workspace = true }
 anyhow = { workspace = true }
 serde = { workspace = true }

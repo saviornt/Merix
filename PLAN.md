@@ -61,7 +61,7 @@ cargo run --bin merix -- --help
 - [ ] Agents crate (basic identity + permissions)
 - [ ] Sandbox stub
 - [ ] Reflection stub
-- [ ] Fix compilation with CUDA - do we have to fork it and fix it ourselves?
+- [ ] Fix compilation with CUDA - do we have to fork it and fix it ourselves? Create a `rusty-llama` port?
 - [ ] Full code review and benchmarks for additional optimization, security
 - [ ] Full Phase 1 integration + end-to-end smoke test (single agent loop)
 - [ ] Final stability verification
