@@ -1,34 +1,35 @@
 ﻿[workspace.package]
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 authors = ["Saviornt"]
 license = "Apache-2.0"
 repository = "https://github.com/saviornt/Merix"
 description = "Merix - Local-first self-extending AI runtime"
 readme = "README.md"
-rust-version = "1.80"
+rust-version = "1.95"
 
 [workspace]
 members = [
     "crates/cli",
-    "crates/utilities",
-    "crates/schemas",
-    "crates/memory",
     "crates/core",
+    "crates/llama",
+    "crates/memory",
+    "crates/resources",
+    "crates/schemas",
+    "crates/utilities",
 ]
 resolver = "2"
 
 [workspace.dependencies]
+# ──────────────────────────────────────────────────────────────
+# External dependencies
+# ──────────────────────────────────────────────────────────────
 anyhow = "1.0"
 clap = { version = "4.5", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
 tracing = "0.1"
 tracing-appender = "0.2"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json", "chrono"] }
-merix-utilities = { path = "crates/utilities" }
-merix-schemas = { path = "crates/schemas" }
-merix-memory = { path = "crates/memory" }
-merix-core = { path = "crates/core" }
 chrono = { version = "0.4", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -36,6 +37,21 @@ uuid = { version = "1.10", features = ["v4", "serde"] }
 surrealdb = { version = "3.0", features = ["kv-rocksdb"] }
 dashmap = { version = "6.1" }
 async-trait = "0.1"
-llama-cpp-2 = { version = "0.1", features = ["cuda"] }
 nvml-wrapper = "0.12"
 sysinfo = { version = "0.38", features = ["system"] }
+llama-cpp-2 = { version = "0.1.146", default-features = false}
+
+# ──────────────────────────────────────────────────────────────
+# Internal workspace crates — ALL of them (best practice)
+# This lets every crate simply do `merix-xxx = { workspace = true }`
+# instead of repeating the path everywhere.
+# ──────────────────────────────────────────────────────────────
+merix-core = { path = "crates/core" }
+merix-llama = { path = "crates/llama" }
+merix-memory = { path = "crates/memory" }
+merix-resources = { path = "crates/resources" }
+merix-schemas = { path = "crates/schemas" }
+merix-utilities = { path = "crates/utilities" }
+
+
+

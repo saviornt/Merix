@@ -1,6 +1,6 @@
 # Merix
 
-*Last updated: May 2, 2026 — Version 1.4*  
+*Last updated: May 2, 2026 — Version 1.5*  
 
 **The rogue messenger that delivers forbidden intelligence.**
 
@@ -161,6 +161,7 @@ Merix/
 │   ├── governance/        # Alignment, verification, policy enforcement, economics
 │   └── utilities/         # Shared helpers (keep small)
 ├── tests/
+│   └── test_models/       # Small models (LLM & Embedding) that can be used for live testing. See notes
 ├── PLAN.md
 ├── README.md
 ├── Cargo.toml
@@ -169,6 +170,8 @@ Merix/
 ```
 
 > The above structure and phase 1 should allow us to use a single agent for further development.
+
+> The LLM model is `tinyllama-1.1b-chat.gguf` and the embedding model is `nomic-embed-text-v1.5.gguf`
 
 ### Libraries & Frameworks
 

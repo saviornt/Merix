@@ -1,15 +1,15 @@
-﻿//! Merix-Utilities — Shared helpers and centralized configuration.
+//! Merix-Utilities — Shared helpers and centralized configuration.
 
 pub mod config;
 
+use chrono::Local;
+use std::path::PathBuf;
 use tracing_subscriber::{
+    EnvFilter,
     fmt::{self, time::ChronoLocal},
     layer::SubscriberExt,
     util::SubscriberInitExt,
-    EnvFilter,
 };
-use chrono::Local;
-use std::path::PathBuf;
 
 /// Configuration for logging behavior
 pub struct LogConfig {
@@ -27,7 +27,9 @@ pub fn init_logging(config: LogConfig) -> anyhow::Result<()> {
         .with_timer(ChronoLocal::rfc_3339())
         .pretty();
 
-    let log_dir = config.log_dir.unwrap_or_else(config::MerixConfig::get_log_directory);
+    let log_dir = config
+        .log_dir
+        .unwrap_or_else(config::MerixConfig::get_log_directory);
     std::fs::create_dir_all(&log_dir)?;
 
     let timestamp = Local::now().format("merix_%Y-%m-%d.log");
@@ -54,7 +56,10 @@ pub fn init_logging(config: LogConfig) -> anyhow::Result<()> {
     // Session separator / header
     let separator = "═".repeat(80);
     tracing::info!("{}", separator);
-    tracing::info!("Merix Session Started at {}", Local::now().format("%Y-%m-%d %H:%M:%S"));
+    tracing::info!(
+        "Merix Session Started at {}",
+        Local::now().format("%Y-%m-%d %H:%M:%S")
+    );
     tracing::info!("Log file: {}", log_file_path.display());
     tracing::info!("Version: {}", env!("CARGO_PKG_VERSION"));
     tracing::info!("{}", separator);

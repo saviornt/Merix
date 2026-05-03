@@ -1,12 +1,14 @@
-﻿use merix_memory::{EtherealMemory, MemoryLayer, PersistentMemory};
-use merix_schemas::{Session, Task, Checkpoint, Skill, TaskStatus, Uuid};
 use chrono::Utc;
+use merix_memory::{EtherealMemory, MemoryLayer, PersistentMemory};
+use merix_schemas::{Checkpoint, Session, Skill, Task, TaskStatus, Uuid};
 
 #[tokio::test]
 async fn test_memory_full_integration_roundtrip() {
     // 1. Create both memory layers
     let db_path = std::env::temp_dir().join("merix_integration_test.db");
-    let persistent = PersistentMemory::new_at_path(db_path.as_path()).await.unwrap();
+    let persistent = PersistentMemory::new_at_path(db_path.as_path())
+        .await
+        .unwrap();
     persistent.init().await.unwrap();
 
     let ethereal = EtherealMemory::new();
@@ -47,6 +49,7 @@ async fn test_memory_full_integration_roundtrip() {
         id: skill_id,
         name: "test_skill".to_string(),
         description: "A test skill for integration".to_string(),
+        code: "Markdown string".to_string(),
         version: "1.0.0".to_string(),
         created_at: Utc::now(),
     };
@@ -54,25 +57,42 @@ async fn test_memory_full_integration_roundtrip() {
     // 3. Store in Persistent
     persistent.store_session(session.clone()).await.unwrap();
     persistent.store_task(task.clone()).await.unwrap();
-    persistent.store_checkpoint(checkpoint.clone()).await.unwrap();
+    persistent
+        .store_checkpoint(checkpoint.clone())
+        .await
+        .unwrap();
     persistent.store_skill(skill.clone()).await.unwrap();
 
     // 4. Load from Persistent
     let loaded_session = persistent.load_session(session_id).await.unwrap().unwrap();
     let loaded_task = persistent.load_task(task_id).await.unwrap().unwrap();
-    let loaded_checkpoint = persistent.load_checkpoint(checkpoint_id).await.unwrap().unwrap();
+    let loaded_checkpoint = persistent
+        .load_checkpoint(checkpoint_id)
+        .await
+        .unwrap()
+        .unwrap();
     let loaded_skill = persistent.load_skill(skill_id).await.unwrap().unwrap();
 
     // 5. Store into Ethereal
-    ethereal.store_session(loaded_session.clone()).await.unwrap();
+    ethereal
+        .store_session(loaded_session.clone())
+        .await
+        .unwrap();
     ethereal.store_task(loaded_task.clone()).await.unwrap();
-    ethereal.store_checkpoint(loaded_checkpoint.clone()).await.unwrap();
+    ethereal
+        .store_checkpoint(loaded_checkpoint.clone())
+        .await
+        .unwrap();
     ethereal.store_skill(loaded_skill.clone()).await.unwrap();
 
     // 6. Verify round-trip with field-by-field assertions (avoids SurrealDB RecordId deserialization issue)
     let roundtrip_session = ethereal.load_session(session_id).await.unwrap().unwrap();
     let roundtrip_task = ethereal.load_task(task_id).await.unwrap().unwrap();
-    let roundtrip_checkpoint = ethereal.load_checkpoint(checkpoint_id).await.unwrap().unwrap();
+    let roundtrip_checkpoint = ethereal
+        .load_checkpoint(checkpoint_id)
+        .await
+        .unwrap()
+        .unwrap();
     let roundtrip_skill = ethereal.load_skill(skill_id).await.unwrap().unwrap();
 
     assert_eq!(roundtrip_session.id, session.id);
@@ -93,5 +113,3 @@ async fn test_memory_full_integration_roundtrip() {
 
     println!("✅ Full MemoryLayer integration roundtrip test passed!");
 }
-
-

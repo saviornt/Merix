@@ -1,13 +1,17 @@
-﻿//! merix-schemas — Domain models for Database & In-Memory data structures
+//! merix-schemas — Domain models for Database & In-Memory data structures
 
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 pub use uuid::Uuid;
-use chrono::{DateTime, Utc};
 
+// Type aliases for clean IDs
 pub type SessionId = Uuid;
 pub type TaskId = Uuid;
 pub type CheckpointId = Uuid;
 pub type SkillId = Uuid;
+
+// Local Result alias for clean, consistent error handling
+pub type Result<T> = anyhow::Result<T>;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Session {
@@ -29,7 +33,7 @@ pub struct Task {
     pub parent_id: Option<TaskId>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum TaskStatus {
     Pending,
     Running,
@@ -57,7 +61,6 @@ pub struct Skill {
     pub created_at: DateTime<Utc>,
 }
 
-/// Extreme LLM inference configuration — now a first-class schema model
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct InferenceConfig {
     pub use_gpu: bool,
@@ -82,7 +85,9 @@ impl Default for InferenceConfig {
             vram_budget_mb: 0,
             context_size: 8192,
             seed: Some(42),
-            n_threads: std::thread::available_parallelism().map(|p| p.get()).unwrap_or(4),
+            n_threads: std::thread::available_parallelism()
+                .map(|p| p.get())
+                .unwrap_or(4),
             n_threads_batch: 0,
             memory_pressure_threshold: 85,
             cache_type_k: "q8_0".into(),
@@ -93,29 +98,14 @@ impl Default for InferenceConfig {
     }
 }
 
-impl InferenceConfig {
-    /// Hardware-aware extreme optimization (pure Rust)
-    pub fn optimize_for_hardware() -> Self {
-        let mut config = Self::default();
-        config.n_gpu_layers = -1;
-        config.flash_attn = true;
-        config.no_mmap = true;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-        if config.vram_budget_mb == 0 {
-            config.vram_budget_mb = 4096;
-        }
-        if config.n_threads_batch == 0 {
-            config.n_threads_batch = config.n_threads;
-        }
-
-        tracing::info!(n_gpu_layers = config.n_gpu_layers, flash_attn = config.flash_attn, vram_mb = config.vram_budget_mb, "LLM runtime extreme-optimized with CUDA");
-        config
-    }
-
-    pub fn validate(&self) -> Result<()> {
-        if self.context_size == 0 || self.n_threads == 0 {
-            anyhow::bail!("Invalid InferenceConfig — context_size and n_threads must be > 0");
-        }
-        Ok(())
+    #[test]
+    fn test_schemas_models_compile() {
+        let _session_id: SessionId = Uuid::new_v4();
+        let _task_id: TaskId = Uuid::new_v4();
+        let _config = InferenceConfig::default();
     }
 }

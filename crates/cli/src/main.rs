@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand, ValueEnum};
-use merix_utilities::{init_logging, log_error, recovery::log_and_exit, LogConfig};
+use merix_utilities::{LogConfig, init_logging, log_error, recovery::log_and_exit};
 use std::env;
 
 #[derive(Parser)]
@@ -74,7 +74,14 @@ async fn main() {
     };
 
     if env::var("RUST_LOG").is_err() {
-        env::set_var("RUST_LOG", format!("merix={},merix_cli={}", level_str, level_str));
+        // SAFETY: This runs in `main()` before any async runtime, Tokio, or additional threads are spawned.
+        // No other code can be reading the environment concurrently at this point.
+        unsafe {
+            env::set_var(
+                "RUST_LOG",
+                format!("merix={},merix_cli={}", level_str, level_str),
+            );
+        }
     }
 
     if let Err(e) = init_logging(LogConfig { log_dir: None }) {

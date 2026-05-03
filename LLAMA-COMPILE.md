@@ -82,11 +82,41 @@ You should get outputs for all three. If not, something is tragecially wrong. Co
 ```toml
 [env]
 CMAKE_GENERATOR = "Ninja"
-CMAKE_BUILD_PARALLEL_LEVEL = "8"
+CMAKE_BUILD_PARALLEL_LEVEL = "16"
+CMAKE_CXX_FLAGS = "/wd221 /wd177"
+CMAKE_CUDA_FLAGS = "-Xcompiler /wd221 -Xcompiler /wd177"
+CARGO_BUILD_JOBS = "16"
 CUDACXX = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v13.2/bin/nvcc.exe"
 ```
 
+> The build parallel level and build jobs depends on how many cpu cores you have. You can check this by using the PowerShell command:
+> ```text
+> `(Get-WmiObject Win32_ComputerSystem).NumberOfLogicalProcessors`
+> ```
+
 *(Yes, we added `CUDACXX` to the environment variables, but cargo doesn't pick it up. Don't ask me why, I don't develop it)*
+
+### Use MSVC in Visual Studio Code
+
+1. Create a new folder under `C:\` called `LaunchCode`.
+2. Inside the folder, right click -> `New` -> `Text Document` and rename it to `Launch VS Code.bat`
+3. Edit using Notepad or whatever. Inside of it put the following:
+
+```text
+@echo off
+call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat" > nul 2>&1
+code
+```
+
+4. Save it.
+5. On the desktop, right click -> `New Shortcut` -> `Browse` -> `This PC` -> `Windows - SSD (C:)` (or whatever) -> `LaunchCode` -> `Launch VS Code.bat` -> Click `OK`
+6. Click `Next`
+7. Name the shortcut and click `Finish`.
+8. Locate the shortcut on your desktop -> Right click -> `Properties`
+9. Click `Change Icon`
+10. In the "Look for icons in this file:", enter `%ProgramFiles%\Microsoft VS Code\Code.exe` and press `Enter`. You should see the VS Code icon. Select it, press `OK`.
+11. Press `Apply` to apply the change and then `OK` to exit the properties.
+12. Open your new VS Code - it *should* launch with MSVC launching it, giving you the ability to run `cl.exe` in the terminal now.
 
 ### Add llama-cpp-rs to your project
 

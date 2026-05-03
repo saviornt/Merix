@@ -1,4 +1,4 @@
-﻿use std::path::PathBuf;
+use std::path::PathBuf;
 
 /// Centralized project-wide configuration and constants.
 pub struct MerixConfig;
@@ -69,7 +69,10 @@ impl MerixConfig {
             }
             let fallback = std::env::current_dir().unwrap_or_default().join("logs");
             std::fs::create_dir_all(&fallback).ok();
-            eprintln!("Using fallback development log path → {}", fallback.display());
+            eprintln!(
+                "Using fallback development log path → {}",
+                fallback.display()
+            );
             return fallback;
         }
 
@@ -96,7 +99,10 @@ impl MerixConfig {
             }
             let fallback = std::env::current_dir().unwrap_or_default().join("data");
             std::fs::create_dir_all(&fallback).ok();
-            eprintln!("Using fallback development data path → {}", fallback.display());
+            eprintln!(
+                "Using fallback development data path → {}",
+                fallback.display()
+            );
             return fallback;
         }
 

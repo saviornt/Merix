@@ -1,0 +1,17 @@
+[package]
+name = "merix-llama"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+merix-schemas = { path = "../schemas" }
+merix-resources = { path = "../resources" }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+llama-cpp-2 = { workspace = true }
+tokio = { workspace = true }
+
+[features]
+default = []
+cuda = ["llama-cpp-2/cuda"]

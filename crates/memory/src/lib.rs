@@ -1,12 +1,14 @@
-﻿//! merix-memory — Persistent (SurrealDB + RocksDB) + Ethereal (Dashmap) memory layer
+//! merix-memory — Persistent (SurrealDB + RocksDB) + Ethereal (Dashmap) memory layer
 
 use anyhow::Result;
-use merix_schemas::{Checkpoint, CheckpointId, InferenceConfig, Session, SessionId, Skill, SkillId, Task, TaskId};
+use async_trait::async_trait;
+use merix_schemas::{
+    Checkpoint, CheckpointId, InferenceConfig, Session, SessionId, Skill, SkillId, Task, TaskId,
+};
 use serde_json::Value;
 use std::path::Path;
-use surrealdb::engine::local::{Db, RocksDb};
 use surrealdb::Surreal;
-use async_trait::async_trait;
+use surrealdb::engine::local::{Db, RocksDb};
 
 /// Unified MemoryLayer trait (both persistent and ethereal implement it)
 #[async_trait]
@@ -61,7 +63,11 @@ impl MemoryLayer for PersistentMemory {
 
     async fn store_session(&self, session: Session) -> Result<()> {
         let value = serde_json::to_value(&session)?;
-        let _: Option<Value> = self.db.upsert(("session", session.id.to_string())).content(value).await?;
+        let _: Option<Value> = self
+            .db
+            .upsert(("session", session.id.to_string()))
+            .content(value)
+            .await?;
         Ok(())
     }
 
@@ -75,7 +81,11 @@ impl MemoryLayer for PersistentMemory {
 
     async fn store_task(&self, task: Task) -> Result<()> {
         let value = serde_json::to_value(&task)?;
-        let _: Option<Value> = self.db.upsert(("task", task.id.to_string())).content(value).await?;
+        let _: Option<Value> = self
+            .db
+            .upsert(("task", task.id.to_string()))
+            .content(value)
+            .await?;
         Ok(())
     }
 
@@ -89,7 +99,11 @@ impl MemoryLayer for PersistentMemory {
 
     async fn store_checkpoint(&self, checkpoint: Checkpoint) -> Result<()> {
         let value = serde_json::to_value(&checkpoint)?;
-        let _: Option<Value> = self.db.upsert(("checkpoint", checkpoint.id.to_string())).content(value).await?;
+        let _: Option<Value> = self
+            .db
+            .upsert(("checkpoint", checkpoint.id.to_string()))
+            .content(value)
+            .await?;
         Ok(())
     }
 
@@ -103,7 +117,11 @@ impl MemoryLayer for PersistentMemory {
 
     async fn store_skill(&self, skill: Skill) -> Result<()> {
         let value = serde_json::to_value(&skill)?;
-        let _: Option<Value> = self.db.upsert(("skill", skill.id.to_string())).content(value).await?;
+        let _: Option<Value> = self
+            .db
+            .upsert(("skill", skill.id.to_string()))
+            .content(value)
+            .await?;
         Ok(())
     }
 
@@ -117,7 +135,11 @@ impl MemoryLayer for PersistentMemory {
 
     async fn store_inference_config(&self, config: InferenceConfig) -> Result<()> {
         let value = serde_json::to_value(&config)?;
-        let _: Option<Value> = self.db.upsert(("inference_config", "global")).content(value).await?;
+        let _: Option<Value> = self
+            .db
+            .upsert(("inference_config", "global"))
+            .content(value)
+            .await?;
         Ok(())
     }
 
@@ -205,20 +227,25 @@ impl MemoryLayer for EtherealMemory {
     }
 
     async fn load_inference_config(&self) -> Result<Option<InferenceConfig>> {
-        Ok(self.inference_config.get("global").map(|r| r.value().clone()))
+        Ok(self
+            .inference_config
+            .get("global")
+            .map(|r| r.value().clone()))
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use merix_schemas::Uuid;
     use chrono::Utc;
+    use merix_schemas::Uuid;
 
     #[tokio::test]
     async fn test_persistent_memory_basic() {
         let db_path = std::env::temp_dir().join("merix_integration_test.db");
-        let persistent = PersistentMemory::new_at_path(db_path.as_path()).await.unwrap();
+        let persistent = PersistentMemory::new_at_path(db_path.as_path())
+            .await
+            .unwrap();
         persistent.init().await.unwrap();
     }
 

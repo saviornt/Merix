@@ -44,8 +44,8 @@ cargo run --bin merix -- --help
 
 - [x] Schemas crate (domain models)
 - [x] MemoryLayer (Persistent SurrealDB + Ethereal Dashmap)
-- [ ] Create resources crate — system resource management (CPU/GPU/VRAM/memory pressure)
-- [ ] Create llama crate — llama-cpp-2 API, InferenceConfig, model loading, and GPU optimizations
+- [x] Create resources crate — system resource management (CPU/GPU/VRAM/memory pressure)
+- [x] Create llama crate — llama-cpp-2 API, InferenceConfig, model loading, and GPU optimizations (gpu off until we can figure CUDA out)
 - [ ] Core runtime
   - [ ] Task execution, session/task model
   - [ ] System resource management and optimizations
@@ -60,6 +60,7 @@ cargo run --bin merix -- --help
 - [ ] Agents crate (basic identity + permissions)
 - [ ] Sandbox stub
 - [ ] Reflection stub
+- [ ] Fix compilation with CUDA - do we have to fork it and fix it ourselves?
 - [ ] Full code review and benchmarks for additional optimization, security
 - [ ] Full Phase 1 integration + end-to-end smoke test (single agent loop)
 - [ ] Final stability verification

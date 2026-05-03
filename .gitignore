@@ -44,5 +44,9 @@ Thumbs.db
 AGENTS.md
 MEMORY.md
 
+# Test models
+test-models/
+test_models/
+
 # Developer Only Documentation
 # TESTING_PLAN.md

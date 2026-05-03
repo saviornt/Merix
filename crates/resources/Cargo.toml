@@ -1,0 +1,11 @@
+[package]
+name = "merix-resources"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sysinfo = { workspace = true }
+nvml-wrapper = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+serde = { workspace = true }
