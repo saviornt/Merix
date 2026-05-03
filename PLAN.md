@@ -49,6 +49,7 @@ cargo run --bin merix -- --help
 - [ ] Core runtime
   - [ ] Task execution, session/task model
   - [ ] System resource management and optimizations
+  - [ ] CPU/GPU <--> RAM model storage and hotswapping
   - [ ] llama-cpp-2 implementation
 - [ ] Project-wide code optimization pass
 - [ ] Registry / MCP Tooling System
