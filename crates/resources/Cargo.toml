@@ -9,3 +9,4 @@ nvml-wrapper = { workspace = true }
 anyhow = { workspace = true }
 tracing = { workspace = true }
 serde = { workspace = true }
+tokio = { workspace = true }

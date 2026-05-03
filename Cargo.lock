@@ -2503,6 +2503,7 @@ dependencies = [
  "nvml-wrapper",
  "serde",
  "sysinfo 0.38.4",
+ "tokio",
  "tracing",
 ]
 

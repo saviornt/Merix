@@ -1,4 +1,4 @@
-﻿[package]
+[package]
 name = "merix-core"
 version.workspace = true
 edition.workspace = true
@@ -17,5 +17,5 @@ tokio = { workspace = true }
 tracing = { workspace = true }
 uuid = { workspace = true }
 chrono = { workspace = true }
-llama-cpp-2 = { workspace = true, features = ["cuda"] }
+llama-cpp-2 = { workspace = true }
 
