@@ -1,6 +1,6 @@
 # Merix
 
-*Last updated: May 2, 2026 — Version 1.5*  
+*Last updated: May 2, 2026 — Version 1.6*  
 
 **The rogue messenger that delivers forbidden intelligence.**
 
@@ -189,7 +189,7 @@ The following frameworks and libraries will be used within Merix. This is the **
 - `tracing = "0.1"` → Structured, event-based diagnostic information (observability foundation)
 - `tracing-subscriber = "0.3"` → Utilities for implementing and composing tracing subscribers (file + console logging)
 - `uuid = { version = "1.10", features = ["v4", "serde"] }` → Unique identifiers for sessions, tasks, checkpoints, and skills
-- `llama-cpp-2 = "0.1"` → Production-ready Rust bindings for llama.cpp (LLM inference engine — user-provided GGUF models)
+- `llama-cpp-2 = { version = "0.1.146", features = ["cuda"] }` → Production-ready Rust bindings for llama.cpp (LLM inference engine + CUDA support)
 
 > SurrealDB + serde_json::Value conflict heaviliy due to serialization friction. All code should use the explicit `serde_json::to_value(&struct)?` pattern before calling `.content()` / `.upsert()` on SurrealDB. No `SurrealValue` derive is used. However, this needs to be validated as stable and crash-safe.
 
@@ -199,6 +199,7 @@ The following frameworks and libraries will be used within Merix. This is the **
 - All crates use the latest stable versions as of April 2026.
 - The workspace will remain minimal and fast to compile.
 - `llama-cpp-2` is the actively maintained binding that matches the exact requirements in the README (user-provided models, CPU+GPU, deterministic sessions).
+- CUDA **must** be working before the end of phase 1.
 
 > Once phase 1 is complete, use the `Qwen3 / Qwen3.5-14B-Coder` model to assist with phase 2 and above.
 
